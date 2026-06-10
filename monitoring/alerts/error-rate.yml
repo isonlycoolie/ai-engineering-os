@@ -1,0 +1,57 @@
+# Error rate alert templates
+#
+# Alert when HTTP 5xx or application error ratio exceeds thresholds.
+# Tune thresholds per endpoint criticality.
+
+alerts:
+  - name: error_rate_critical
+    severity: critical
+    description: |
+      {{ $labels.service }} error rate exceeds 1% over 5 minutes.
+      Check recent deploys, dependency health, and saturation.
+    runbook: https://github.com/org/runbooks/blob/main/high-error-rate.md
+    for: 5m
+    labels:
+      team: oncall
+    annotations:
+      summary: "Critical error rate on {{ $labels.service }}"
+      dashboard: https://grafana.example.com/d/service-overview
+    expr: |
+      (
+        sum(rate(http_requests_total{status=~"5..", service="$SERVICE"}[5m]))
+        /
+        sum(rate(http_requests_total{service="$SERVICE"}[5m]))
+      ) > 0.01
+
+  - name: error_rate_warning
+    severity: warning
+    description: |
+      {{ $labels.service }} error rate exceeds 0.1% over 15 minutes.
+    runbook: https://github.com/org/runbooks/blob/main/high-error-rate.md
+    for: 15m
+    labels:
+      team: oncall
+    annotations:
+      summary: "Elevated error rate on {{ $labels.service }}"
+    expr: |
+      (
+        sum(rate(http_requests_total{status=~"5..", service="$SERVICE"}[15m]))
+        /
+        sum(rate(http_requests_total{service="$SERVICE"}[15m]))
+      ) > 0.001
+
+  - name: error_rate_spike_by_route
+    severity: warning
+    description: |
+      Route {{ $labels.route }} on {{ $labels.service }} has a localized error spike.
+    for: 10m
+    labels:
+      team: oncall
+    annotations:
+      summary: "Route-level error spike: {{ $labels.method }} {{ $labels.route }}"
+    expr: |
+      (
+        sum(rate(http_requests_total{status=~"5..", service="$SERVICE"}[10m])) by (service, method, route)
+        /
+        sum(rate(http_requests_total{service="$SERVICE"}[10m])) by (service, method, route)
+      ) > 0.05
