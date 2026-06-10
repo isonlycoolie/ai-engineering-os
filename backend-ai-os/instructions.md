@@ -238,3 +238,83 @@ The following patterns are explicitly banned. If an implementation requires any 
 | **Silent failures** | Exceptions caught and discarded without logging | Log with correlation ID; return standard error envelope |
 | **Generic 500 for validation errors** | Clients cannot recover; support cannot diagnose | 4xx with machine-readable `code` and actionable `message` |
 | **Leaking stack traces to clients** | Information disclosure | Internal detail in logs only; sanitized client response |
+
+## Configuration and Security
+
+| Anti-pattern | Why it fails | Alternative |
+|--------------|--------------|-------------|
+| **Magic numbers and strings** | Unmaintainable, error-prone | Named constants, enums, or config with validation |
+| **Hardcoded environment values** | Breaks across environments; secret leakage risk | Environment variables validated at startup |
+| **Unrestricted CORS** | Cross-origin abuse in production | Explicit allowed origins per environment |
+
+## Caching
+
+| Anti-pattern | Why it fails | Alternative |
+|--------------|--------------|-------------|
+| **Cache without invalidation strategy** | Stale reads, data integrity bugs | Define TTL, event-driven invalidation, or version keys |
+| **Caching auth/session tokens inappropriately** | Security and consistency risk | Cache only idempotent, non-sensitive read models |
+
+## Testing
+
+| Anti-pattern | Why it fails | Alternative |
+|--------------|--------------|-------------|
+| **Testing implementation details** | Tests break on refactor | Assert behavior and contracts, not internals |
+| **No failure-mode tests** | Production surprises | At least two failure modes per public endpoint |
+| **Shared mutable test state** | Flaky, order-dependent tests | Isolated fixtures, transactions rolled back per test |
+
+## Tradeoff guidance
+
+Select the appropriate option based on **explicit context** - requirement, scale, team boundaries, and data sensitivity. Do not default to personal preference. Escalate to Architecture Engineer when the decision is irreversible or cross-service.
+
+## Consistency vs. Availability
+
+| Option A | Option B | Guidance |
+|----------|----------|----------|
+| Strong consistency | Eventual consistency | **Default strong** for financial transactions, inventory, auth state. **Eventual** acceptable for read-heavy analytics, activity feeds, search indexes |
+
+**Signals for strong consistency:** money movement, inventory deduction, permission grants, idempotency-sensitive writes.
+
+**Signals for eventual consistency:** dashboards, recommendations, non-critical notifications, denormalized read models.
+
+## REST vs. Event-Driven
+
+| Option A | Option B | Guidance |
+|----------|----------|----------|
+| Synchronous REST | Async messaging | **REST** for request-response, CRUD, client-facing APIs. **Messaging** for fire-and-forget, cross-service workflows, audit trails, fan-out |
+
+**Do not** use messaging to hide synchronous coupling the client still waits on. **Do not** use REST for high-volume fan-out where consumers scale independently.
+
+## Caching Granularity
+
+| Option A | Option B | Guidance |
+|----------|----------|----------|
+| Cache full objects | Cache computed fields | **Full objects** unless object is large (>100KB), invalidation complexity is high, or only a slice is read |
+
+Document invalidation strategy regardless of granularity. Prefer cache-aside pattern with explicit TTL.
+
+## ORM vs. Raw SQL
+
+| Option A | Option B | Guidance |
+|----------|----------|----------|
+| ORM (Prisma, SQLAlchemy) | Raw SQL | **ORM** for standard CRUD, migrations, and team velocity. **Raw SQL** for complex reporting, aggregations, CTEs, or performance-critical paths with documented benchmarks |
+
+Raw SQL lives in repository layer - never scattered in controllers.
+
+## Monolith vs. Microservices
+
+| Option A | Option B | Guidance |
+|----------|----------|----------|
+| Modular monolith | Microservices | **Default modular monolith** with clear module boundaries. **Extract services** only when team boundaries, independent scaling, or deployment isolation are clear and documented in ADR |
+
+See `references.md` (legacy patterns on tag `v1-legacy`).
+
+## Sync vs. Async Processing
+
+| Option A | Option B | Guidance |
+|----------|----------|----------|
+| Inline in request | Background job | **Inline** when user needs immediate result and work completes in <500ms p95. **Background** for email, exports, webhooks, heavy computation |
+
+Return `202 Accepted` with job ID when deferring; provide status endpoint.
+
+## Database Choice
+
