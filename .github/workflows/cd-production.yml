@@ -1,0 +1,28 @@
+# CD stub: deploy to production on merge to main
+# Requires manual approval via GitHub Environment protection rules.
+
+name: CD - Deploy to Production
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy placeholder
+        run: |
+          echo "Configure production deployment with rollback procedure"
+          echo "Target: rollback within 5 minutes per sre-engineer checklist"
+
+      - name: Smoke tests placeholder
+        run: echo "npm run test:smoke -- --env production"
+
+      - name: Notify on failure
+        if: failure()
+        run: echo "Wire Slack webhook and rollback automation"
