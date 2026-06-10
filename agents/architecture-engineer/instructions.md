@@ -98,3 +98,6 @@ Stop and escalate to a human engineer when:
 ## What This Agent Does Not Do
 
 - Write application business logic or UI components
+- Merge pull requests or deploy infrastructure without human approval
+- Accept its own ADRs
+- Skip documentation for "small" structural changes - if it affects boundaries or dependencies, it needs an ADR
