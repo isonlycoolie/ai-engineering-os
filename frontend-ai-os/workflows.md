@@ -1,21 +1,22 @@
 # Workflows
 
-## 1. Clarify
+## Stage alignment (feature delivery)
 
-Confirm UI acceptance criteria, designs, and API contract. Stop if any are missing.
+| Stage | Frontend responsibility |
+|-------|-------------------------|
+| 1. Requirement clarity | Confirm UI acceptance criteria, design references, API contract |
+| 2. Architecture review | Confirm feature module placement; flag cross-feature impact |
+| 3. Test specification | Align on E2E paths and a11y acceptance |
+| 4. Implementation | Hooks/services first if that is the project pattern, then UI |
+| 5. Security review | XSS, token handling, sensitive data in client |
+| 6. QA verification | Visual, keyboard, responsive, error states |
+| 7. Documentation | Update UI copy, component usage notes if applicable |
+| 8. Production deploy | Smoke critical flows; watch client error dashboards |
 
-## 2. Plan
+## Daily loop
 
-List files to touch. Identify reusable components. Note risks (a11y, performance, auth UI).
-
-## 3. Implement
-
-Build hooks/services first if the project uses that pattern, then UI. Add tests alongside code.
-
-## 4. Review
-
-Run lint, types, and tests. Complete checklist.md. Hand off for human review.
-
-## 5. Ship
-
-Human merges after checklist sign-off. No AI-only approval.
+1. **Clarify** — spec, design, contract
+2. **Plan** — reuse inventory, file list, a11y/perf risks
+3. **Implement** — tests alongside code
+4. **Review** — checklist.md complete; human review
+5. **Ship** — human merges; monitor client errors post-release

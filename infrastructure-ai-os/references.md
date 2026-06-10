@@ -1,6 +1,5 @@
 # References
 
-## External
-
-- [AWS Well-Architected Framework](https://aws.amazon.com/architecture/well-architected/)
-- [Terraform best practices (conceptual)](https://developer.hashicorp.com/terraform/cloud-docs/recommended-practices)
+- ADR template: `v1-legacy:agents/architecture-engineer/templates/adr-template.md`
+- Patterns: `v1-legacy:architecture/patterns/`
+- AWS Well-Architected, Terraform recommended practices

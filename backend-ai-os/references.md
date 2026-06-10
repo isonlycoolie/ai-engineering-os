@@ -2,9 +2,13 @@
 
 ## Example stacks
 
-Common stacks include Node/Express, FastAPI, Django, Spring Boot, Go services, and serverless handlers. Adapt to your project.
+Node/TypeScript, Python/FastAPI/Django, Go, Java/Spring, .NET. ORM or query layer per project conventions.
 
 ## External
 
 - [OWASP API Security Top 10](https://owasp.org/www-project-api-security/)
-- [12-Factor App Config](https://12factor.net/config)
+- [12-Factor App](https://12factor.net/)
+
+## Legacy depth
+
+Tag `v1-legacy`: `agents/backend-engineer/`, `standards/api.md`

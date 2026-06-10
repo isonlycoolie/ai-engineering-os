@@ -1,8 +1,7 @@
 # Prompts
 
-## ML feature
-
 ```
 Use ./machine-learning-ai-os for [problem].
-Deliver: data audit notes, feature plan, eval metrics vs baseline, deployment risks.
+Deliver: data audit, feature plan, eval vs baseline, model card draft, deployment and monitoring risks.
+Do not skip baseline or leakage analysis.
 ```

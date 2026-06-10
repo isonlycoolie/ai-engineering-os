@@ -1,22 +1,16 @@
 # Standards
 
-## Pipelines
+## Pipeline design
+Idempotent tasks. Explicit dependencies. Retry with backoff. Dead-letter for poison messages. Timeouts on every external call.
 
-- Idempotent tasks with clear deduplication keys.
-- Partitioning strategy documented for time-series data.
-- SLAs and freshness targets stated per dataset.
+## Data contracts
+Versioned schemas. Documented null/default semantics. Owner contact for breaking changes. Consumer registration for new fields.
 
-## Data quality
+## Quality
+SLI: freshness, completeness, accuracy thresholds. Alert on breach. Quarantine with metrics.
 
-- Validate row counts, null rates, and key uniqueness at boundaries.
-- Quarantine bad records; do not silently drop without metrics.
+## Security
+Least-privilege IAM. Encrypt at rest and in transit. Audit access to PII. Minimize fields in downstream marts.
 
-## Schema
-
-- Backward-compatible changes preferred. Breaking changes versioned and announced.
-- PII classified and minimized in downstream datasets.
-
-## Operations
-
-- Backfill runbook with cost and time estimates.
-- Observability: task duration, failure rate, data volume anomalies.
+## Git discipline
+Small PRs for pipeline logic. Separate config from code where team uses GitOps.

@@ -1,14 +1,14 @@
 # References
 
-## Optional example stacks
+## Example stacks (optional)
 
-Teams often use React, Vue, Angular, Svelte, or native mobile UI toolkits. This package is stack-agnostic.
+React, Vue, Angular, Svelte, React Native, Flutter. Common patterns: server-state libraries, form validators, design systems. **Adapt to what the project already uses.**
 
 ## External
 
 - [WCAG 2.1 Quick Reference](https://www.w3.org/WAI/WCAG21/quickref/)
-- [OWASP XSS Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html)
+- [OWASP XSS Prevention](https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html)
 
-## Architecture notes
+## Legacy depth
 
-Document significant UI architecture decisions in your project's own ADR or design doc process. This package does not prescribe ADR location or format.
+Full v1 agent tree: git tag `v1-legacy` → `agents/frontend-engineer/`

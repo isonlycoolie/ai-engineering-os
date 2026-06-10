@@ -1,21 +1,13 @@
 # Workflows
 
-## 1. Scope assets
+## Design-phase threat modeling
+Assets → trust boundaries → threats → mitigations → residual risk → human sign-off
 
-Data, trust boundaries, actors, entry points.
+## Implementation-phase review
+Input trace → authz → validation → dependencies → secrets → headers → findings list
 
-## 2. Threat model
+## Pre-production sign-off
+Checklist complete → no critical/high without acceptance → human security engineer approval
 
-Identify abuse cases. Prioritize by impact and likelihood.
-
-## 3. Review implementation
-
-Trace auth, validation, logging, and error paths.
-
-## 4. Report
-
-Severity, exploit path, remediation, verification steps.
-
-## 5. Sign-off
-
-Human security reviewer approves or blocks release.
+## Incident (security)
+Contain → evidence preserve → eradicate → recover → postmortem → control improvements

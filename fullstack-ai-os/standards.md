@@ -1,20 +1,15 @@
 # Standards
 
-## Contract-first
+## Contract-first integration
+OpenAPI, GraphQL schema, or shared types are the handshake. UI types derive from contract.
 
-- Define or update the API contract before parallel UI/backend work diverges.
-- Shared types or OpenAPI should be the source of truth for field names and errors.
+## Auth consistency
+Session/token behavior identical in client expectations and server enforcement.
 
-## Vertical slices
+## Error model
+Same codes and semantics in API envelope and UI messaging.
 
-- Prefer thin end-to-end slices over long-lived partially integrated branches.
-- Each slice should be demoable and testable across layers.
+## Testing
+Integration test minimum for each slice. E2E for critical journeys.
 
-## Consistency
-
-- Error codes and validation messages must read the same in API docs and UI copy.
-- Auth/session behavior must match on client and server.
-
-## Git discipline
-
-- Coordinate PRs: one focused PR per layer or one small vertical slice PR. Avoid mega-PRs.
+See `frontend-ai-os/standards.md` and `backend-ai-os/standards.md` for layer depth.

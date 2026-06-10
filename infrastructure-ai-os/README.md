@@ -1,51 +1,29 @@
 # Infrastructure AI Engineering
 
-IaC, environments, networking, and cloud topology guidance (non-prescriptive).
+IaC, topology, ADRs, environments.
 
-This is a **portable engineering intelligence package**. Copy it anywhere in your project. Reference it in any AI tool. No install step.
+Portable **enterprise engineering intelligence** for AI-assisted work. Copy this folder anywhere in your project.
 
-## Usage
+## Quick start
 
-1. Copy the `infrastructure-ai-os/` folder into your project (any location you prefer).
-2. Tell your AI assistant to use it, for example:
+1. Copy `infrastructure-ai-os/` into your repo (any path you choose).
+2. Tell AI: `Use ./infrastructure-ai-os while working on [task].`
+3. Start with **`instructions.md`** — enterprise mandate, working rules, limitations, anti-patterns, tradeoffs, git discipline, handoff requirements.
+4. Use **`standards.md`**, **`checklist.md`**, and **`prompts.md`** as needed.
 
-   ```
-   Use ./infrastructure-ai-os while implementing [your task].
-   ```
+## Files
 
-3. Open the files in this folder as needed:
+| File | Content depth |
+|------|----------------|
+| `instructions.md` | Full operating manual: mandate, collaboration rules, responsibilities, working steps, limitations, anti-patterns, tradeoffs, git discipline, handoff |
+| `standards.md` | Production engineering rules |
+| `workflows.md` | Stage-aligned delivery loops |
+| `prompts.md` | Copy-paste session prompts |
+| `checklist.md` | Pre-merge verification |
+| `references.md` | Optional deep reading |
 
-   | File | Purpose |
-   |------|---------|
-   | `instructions.md` | How AI should behave |
-   | `standards.md` | Engineering rules |
-   | `workflows.md` | When to clarify, build, review, ship |
-   | `prompts.md` | Copy-paste prompt templates |
-   | `checklist.md` | Pre-merge verification |
-   | `references.md` | Optional deep reading |
+## Not a framework
 
-## Placement examples (your choice)
+This package does not install tooling or enforce folder layout. Your project structure stays yours.
 
-```
-my-project/
-├── src/
-├── infrastructure-ai-os/          # at repo root
-```
-
-```
-my-project/
-├── docs/ai/infrastructure-ai-os/  # under docs
-```
-
-```
-my-project/
-├── tools/infrastructure-ai-os/    # under tools
-```
-
-## What this is not
-
-- Not a framework or runtime
-- Not a project template or code generator
-- Not a mandated folder structure
-
-Engineering intelligence only. You decide where it lives and how your code is organized.
+Pre-Phase-1 depth lives on git tag **`v1-legacy`**.

@@ -1,21 +1,45 @@
 # Standards
 
-## Authentication and authorization
+# Security Standards
 
-- Established libraries only. No custom crypto.
-- Default deny authorization. Document public endpoints.
+Security is a system property, not a phase.
 
-## Input and output
+## Authentication and Authorization
 
-- Schema validation at boundaries. Parameterized queries.
-- Encode/sanitize output appropriate to context (HTML, JSON, logs).
+- Use established libraries - no custom cryptography
+- Authorization enforced at service layer, not only API gateway
+- Every endpoint authenticated unless explicitly justified and documented
+- JWT: short-lived access tokens, refresh token rotation
 
-## Transport and headers
+## Input and Output
 
-- HTTPS everywhere. Security headers configured.
-- Rate limiting on public surfaces. Restrictive CORS in production.
+- Validate all inputs against schema before processing
+- Sanitize outputs before rendering in UI
+- Parameterized queries only - no string concatenation for SQL
 
-## Secrets and dependencies
+## Transport and Headers
 
-- Secrets in vault, rotated on schedule.
-- No unaddressed critical/high CVEs in production dependencies.
+- HTTPS on all endpoints
+- Security headers: CSP, HSTS, X-Frame-Options, X-Content-Type-Options
+- Rate limiting on all public endpoints
+- CORS: never `Access-Control-Allow-Origin: *` in production
+
+## Secrets
+
+- Stored in approved vault - not in source or version control
+- Rotated on defined schedule
+- Never logged (passwords, tokens, PII)
+
+## Dependencies
+
+- No critical or high-severity vulnerabilities in production dependencies
+- New dependencies require justification in ADR or PR description
+
+## Agent Invocation
+
+| Task | Prompt / Agent |
+|------|----------------|
+| PR security review | [stage-05-security-review.md](../workflows/prompts/stage-05-security-review.md) |
+| Threat modeling | [security-engineer/prompts/primary.md](../agents/security-engineer/prompts/primary.md) |
+| Dependency audit | [dependency-audit.md](../workflows/prompts/dependency-audit.md) |
+| Pre-release checklist | [security-engineer/checklists/security-review.md](../agents/security-engineer/checklists/security-review.md) |

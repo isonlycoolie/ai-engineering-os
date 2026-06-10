@@ -1,5 +1,4 @@
 # References
 
-## External
-
-- [Tufte principles on chart integrity (conceptual)](https://www.edwardtufte.com/tufte/)
+- Tufte: chart integrity principles
+- Legacy QA spec patterns: `v1-legacy:agents/qa-engineer/`

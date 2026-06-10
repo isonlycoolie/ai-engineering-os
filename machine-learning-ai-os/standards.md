@@ -1,20 +1,13 @@
 # Standards
 
-## Data and features
+## Experiments
+Track params, data version, code SHA. Reproducible training runs. Experiment registry or equivalent.
 
-- Train/validation/test splits documented. No leakage from future data.
-- Feature definitions versioned. Point-in-time correctness for historical features.
+## Features
+Version feature definitions. Point-in-time joins for historical training. Document freshness SLA.
 
-## Training and evaluation
+## Evaluation
+Metrics aligned to business. Calibration for probabilistic models. Slice analysis mandatory.
 
-- Baseline model required. Metrics aligned to business outcome.
-- Evaluate on held-out data. Document class imbalance handling.
-
-## Deployment
-
-- Train/serve skew checked. Rollback to prior model documented.
-- Monitor latency, error rate, and prediction drift.
-
-## Governance
-
-- Model card: intended use, limitations, bias risks, retrain cadence.
+## Production
+Model registry. Approval gate. Monitoring dashboards. Rollback procedure tested.

@@ -1,21 +1,18 @@
 # Workflows
 
-## 1. Clarify
+## Stage alignment
 
-Confirm API contract, acceptance criteria, auth rules, and data model impact.
+| Stage | Backend responsibility |
+|-------|------------------------|
+| 1. Requirement clarity | Acceptance criteria, API contract, auth rules, data model impact |
+| 2. Architecture review | Layering, migrations, indexes, blast radius, rollback |
+| 3. Test specification | Contract tests, failure modes, authz cases |
+| 4. Implementation | Boundary → service → persistence; tests with failure modes |
+| 5. Security review | Authz, injection, secrets, dependency scan |
+| 6. QA verification | Integration tests, regression suite |
+| 7. Documentation | OpenAPI, changelog, error codes |
+| 8. Production deploy | Monitor errors, latency, saturation |
 
-## 2. Plan
+## Implementation loop
 
-List endpoints, services, migrations, and blast radius. Note rollback approach.
-
-## 3. Implement
-
-Boundary validation → service logic → persistence. Tests with happy path and failure modes.
-
-## 4. Review
-
-Update API documentation. Complete checklist. Human review required.
-
-## 5. Ship
-
-Deploy via team process. Monitor errors and latency after release.
+Clarify → Plan (files, migrations, indexes) → Implement → Security pass → Checklist → Human PR → Ship

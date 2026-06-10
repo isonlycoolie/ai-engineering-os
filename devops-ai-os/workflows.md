@@ -1,21 +1,13 @@
 # Workflows
 
-## 1. Clarify
+## Service readiness
+Define SLOs → alerts → runbooks → health checks → tracing → rollback tested → load test
 
-Environment, risk level, rollback requirements, SLO impact.
+## Pre-production gate
+Checklist → secrets in vault → pipeline reliability → human SRE sign-off
 
-## 2. Change plan
+## Deploy
+CI/CD only → smoke tests → dashboard watch window → human confirms healthy
 
-Pipeline diff, secret needs, verification steps, rollback.
-
-## 3. Implement
-
-Apply in non-prod first. Validate metrics and logs.
-
-## 4. Review
-
-Peer review for prod paths. Checklist complete.
-
-## 5. Release
-
-Monitor error budget and key metrics after change.
+## Incident
+Acknowledge → mitigate (rollback if needed) → communicate → blameless postmortem → action items

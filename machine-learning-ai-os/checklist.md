@@ -1,8 +1,12 @@
 # Checklist
 
-- [ ] Leakage checks passed
+- [ ] Problem framing and business metric documented
+- [ ] Data audit and label definition recorded
+- [ ] Leakage checks passed (time/group splits verified)
 - [ ] Baseline comparison documented
-- [ ] Holdout eval reported
-- [ ] Model card drafted
-- [ ] Rollback plan exists
-- [ ] Human approval for production promotion
+- [ ] Holdout eval on untouched test set
+- [ ] Model card complete
+- [ ] Train/serve skew reviewed
+- [ ] Rollback tested
+- [ ] Monitoring and alerts configured
+- [ ] Human approval for production

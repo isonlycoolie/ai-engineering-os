@@ -1,6 +1,4 @@
 # References
 
-## External
-
-- [Google SRE Book - Monitoring](https://sre.google/sre-book/monitoring-distributed-systems/)
-- [12-Factor App - Logs](https://12factor.net/logs)
+- [Google SRE Book](https://sre.google/sre-book/table-of-contents/)
+- Legacy: `v1-legacy:agents/sre-engineer/`, `standards/observability.md`

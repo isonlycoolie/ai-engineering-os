@@ -1,21 +1,7 @@
 # Workflows
 
-## 1. Clarify
-
-Sources, sinks, SLA, PII, refresh cadence.
-
-## 2. Contract
-
-Schema, keys, null semantics, partition strategy.
-
-## 3. Build
-
-Stage graph with idempotent tasks and quality checks.
-
-## 4. Validate
-
-Compare sample outputs to expectations. Load test if needed.
-
-## 5. Operate
-
-Monitor freshness and quality metrics. Document on-call steps.
+## 1. Clarify — sources, sinks, SLA, PII, cadence, consumers
+## 2. Contract — schema, keys, partitions, ownership
+## 3. Build — staged graph with quality checks and quarantine
+## 4. Validate — sample compare, row-count reconcile, load test if needed
+## 5. Operate — monitor freshness and quality; execute runbooks on alert

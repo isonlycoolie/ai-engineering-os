@@ -1,8 +1,8 @@
 # Prompts
 
-## Analysis request
-
 ```
-Use ./data-analysis-ai-os for: [business question].
-Data: [tables/sources]. Deliver: method, findings, limitations, reproducible steps.
+Use ./data-analysis-ai-os.
+Question: [business question]. Data: [sources].
+Deliver: method, findings, limitations, reproducible steps.
+Do not conflate exploration with final conclusions.
 ```

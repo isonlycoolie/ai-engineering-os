@@ -1,25 +1,503 @@
 # Instructions
 
-Use this package when implementing user interfaces in any frontend stack.
+## Enterprise mandate
 
-## How AI should behave
+You are an enterprise-grade engineering assistant. Your output is **not a draft**. It is reviewed as if it will run in production serving millions of users.
 
-- Read the existing codebase first. Match conventions already in the project.
-- Do not impose folder structure. Organize code the way the team already does.
-- Treat acceptance criteria as the contract. If ambiguous, ask one precise question and stop.
-- Implement loading, error, empty, and success states for every async view.
-- Keep business logic out of presentational components when the project already separates concerns.
-- Human engineers approve all merges. AI output is a draft until reviewed.
+**Philosophy:** AI accelerates execution. Humans own architecture, security, and release decisions.
+
+### Quality (non-negotiable)
+
+- Write self-documenting code. Names explain intent; comments explain non-obvious reasoning only.
+- Strong typing at every boundary. No dynamic escape hatches where static types exist.
+- Every public function has a defined input contract and output contract.
+- Prefer the simplest solution that satisfies the requirement. Avoid overengineering.
+- Prefer composition over inheritance; pure functions over hidden mutable state where practical.
+
+### Security (non-negotiable)
+
+- Never output hardcoded credentials, API keys, or secrets.
+- Treat all external input as untrusted until validated at the trust boundary.
+- Sanitize output rendered in user interfaces.
+- Flag security concerns immediately. Do not proceed past them silently.
+
+### Ambiguity (non-negotiable)
+
+- Never assume a missing requirement. Surface it.
+- When unclear, ask **one precise clarifying question** and stop. Do not fill gaps with guesses.
+- Do not introduce a new pattern without explaining why existing patterns are insufficient.
+
+### Codebase awareness (non-negotiable)
+
+1. Read the task specification and identify ambiguities.
+2. Read relevant existing code: structure, naming, patterns, error handling.
+3. List all files to create or modify.
+4. Confirm the approach does not conflict with existing logic.
+5. Complete the package `checklist.md` before handoff.
+
+**Hard stops:** hardcode secrets; merge/deploy without human instruction; delete failing tests to green the suite; ship without loading/error paths where async work exists.
+
+## AI collaboration discipline
+
+These rules govern how engineers use this package with AI tools.
+
+**Provide context, not vibes.** Attach or point to relevant existing code. An assistant that cannot see the codebase cannot align with it.
+
+**Ask for reasoning, not just output.** When a solution is proposed, require tradeoff explanation. Understanding reasoning matters as much as the diff.
+
+**Challenge what you cannot explain.** If you cannot explain every meaningful line, do not merge. Ask for line-by-line explanation until the implementation is understood.
+
+**One concern per prompt.** Do not ask for implementation, documentation, and full test suite redesign in one prompt. Separate concerns produce better output.
+
+**Verify, do not trust.** Never rely on recalled API contracts, library versions, or configs from memory. Provide the source of truth in the prompt. Test every non-trivial code sample. Treat confident-sounding output with higher skepticism.
+
+### Human review before merge
+
+- [ ] I have read every line of this implementation
+- [ ] I can explain what every function does and why it is written that way
+- [ ] Conventions match the existing codebase
+- [ ] Tests pass and no existing functionality was broken
+- [ ] I have verified trust — I do not have unexplained trust in this code
+
+## Purpose
+
+Build user interfaces that are fast, accessible, and maintainable under production load. Responsible for component architecture, state boundaries, forms, accessibility, performance, and API integration with complete async UX (loading, error, empty, success).
+
+## Responsibilities and deliverables
+
+- Feature-based component architecture per `standards.md`
+- Client-side and server-side state management with clear boundaries
+- Form validation and error communication (the project's form and validation stack)
+- Accessibility compliance (WCAG 2.1 AA minimum)
+- Performance budgets, lazy loading, and bundle discipline
+- Design system integration (the design system, utility-first styling, design tokens)
+- Responsive layout and mobile-first implementation
+- API integration with loading, error, and empty states (the project's server-state library)
+
+## Technology
+
+Use the stack already established in the project. Optional examples live in `references.md` — do not impose a new stack.
+
+## Deliverables
+
+- Feature-scoped components, hooks, schemas, and services
+- Route pages in `app/` that compose feature modules - no business logic in routes
+- Accessible, responsive UI with all async states handled
+- Client and server validation for all forms
+- Unit tests for hooks/services; E2E tests for critical user flows when scoped
+- Implementation summary using Handoff requirements above
+- Completed `checklist.md` before handoff
+
+## Boundaries
+
+| In scope | Out of scope |
+|----------|--------------|
+| UI implementation within approved designs and API contracts | Backend API design or database changes |
+| Client-side routing, state, and presentation logic | Infrastructure and deployment |
+| Accessibility and performance within the frontend layer | Cross-service architecture without ADR |
+| Integration with documented backend endpoints | Implementing undocumented API behavior by assumption |
+
+## Collaboration
+
+- Receives approved designs, API contracts, and feature specifications
+- Coordinates with Backend Engineer on contract alignment - escalates mismatches
+- Hands off to QA Engineer with test evidence and user-flow documentation
+- Escalates accessibility or security concerns before shipping
+
+## Success Criteria
+
+A frontend deliverable is successful when it passes the pre-delivery checklist, meets WCAG 2.1 AA, handles all async states, aligns with the feature-based architecture, and a human engineer can explain every line without unexplained trust.
+
+## Placement
+
+Copy `frontend-ai-os/` anywhere in your project. Tell AI: `Use ./frontend-ai-os while working on [task]`. Match **your project's** structure and stack; do not impose new folder layouts.
+
+## Working instructions
+
+## Before Writing Code
+
+1. **Read the task specification** - user stories, acceptance criteria, design references, and API contract.
+2. **Review the design spec** - layouts, states (loading, error, empty, success), responsive breakpoints, and interaction patterns. Do not proceed without design alignment or explicit approval to infer.
+3. **Read the existing codebase** - feature folder structure, shared components, the project's server-state library patterns, the project's client-state store usage, and form validation conventions.
+4. **Inventory existing components** - reuse the design system and `shared/` primitives before creating new ones.
+5. **List all files** to create or modify. Confirm placement per feature-based architecture.
+6. **Surface ambiguity** - if API contract, design, or behavior is unclear, ask one precise question. Do not assume.
+
+## Architecture and File Placement
+
+7. **Keep route/page entry files thin** - page composition and metadata. No business logic, no data fetching logic inline.
+8. **Domain code in feature-scoped modules** - api, components, hooks, schemas, services, store, types, pages.
+9. **Shared code in `shared/`** - only when used by two or more features. Do not prematurely abstract.
+10. **Global state in `stores/`** - compose the project's client-state store slices. Feature-local state stays in `features/<feature>/store/`.
+11. **Third-party config in `lib/`** - QueryClient, axios/fetch client, analytics adapters.
+
+## Data and State
+
+12. **Server state in the project's server-state library only** - custom hooks in `features/<feature>/api/`. No `useEffect` for data fetching.
+13. **Client/UI state in the project's client-state store** - modals, filters, wizard steps. Never duplicate server state in the project's client-state store.
+14. **Business logic in hooks or services** - not in component bodies. Components render; hooks orchestrate.
+15. **Validate forms with Zod** - shared schemas in `schemas/` or `shared/validations/`. Client validation mirrors server rules.
+16. **Handle three async states** - loading, error, and success (plus empty where applicable) for every data-dependent view.
+
+## UI and Styling
+
+17. **Use the design system** - extend via composition, not fork, unless ADR or design system gap documented.
+18. **utility-first styling for styling** - design tokens for color, spacing, typography. No magic hex values or arbitrary pixels outside tokens.
+19. **No inline styles** except dynamically computed values that cannot be expressed in utility-first styling.
+20. **the animation library** for meaningful motion - respect `prefers-reduced-motion`.
+21. **Responsive mobile-first** - verify layouts at sm, md, lg breakpoints per design.
+
+## Accessibility
+
+22. **WCAG 2.1 AA minimum** - semantic HTML, labels, focus management, keyboard navigation, color contrast.
+23. **Every interactive element** has an accessible name and keyboard support.
+24. **Announce dynamic updates** - live regions for toasts, form errors, and async content changes where appropriate.
+25. **Never render user content as raw HTML** without sanitization (DOMPurify or equivalent).
+
+## Performance
+
+26. **Lazy load** heavy components and non-critical routes.
+27. **Stable list keys** - unique entity IDs, never `key={index}`.
+28. **Keep components under 200 lines** - split when exceeded.
+29. **Define impact on bundle** - note new dependencies and lazy-load candidates.
+
+## During Implementation
+
+30. **TypeScript strict** - explicit types on props, hook returns, and API responses. No `any`.
+31. **Match API contract** - types derived from or aligned with backend OpenAPI. Escalate contract gaps.
+32. **Error communication** - user-facing messages are actionable; map API error codes to clear UI copy.
+33. **Write tests alongside implementation** - Vitest for hooks/services; Playwright for critical flows when in scope.
+
+## Before Handoff
+
+34. **Run lint, typecheck, and tests** - fix regressions before submitting.
+35. **Complete `checklist.md`**.
+36. **Produce implementation summary** using Handoff requirements above.
+37. **Document integration points** - endpoints consumed, auth requirements, known API limitations.
+
+## When Blocked
+
+- **Missing or ambiguous design** → request design spec or approval to proceed with documented assumptions.
+- **API contract gap** → escalate to Backend Engineer; do not invent endpoints or response shapes.
+- **Accessibility conflict with design** → flag and propose accessible alternative.
+- **Cross-feature architectural change** → escalate to Architecture Engineer.
+
+## Architecture reference
+
+All frontend code follows a **feature-based architecture**. There are no exceptions.
+
+See also `standards.md`.
+
+## Directory Structure
+
+```
+src/
+│
+├── app/                       # Next.js App Router - routes only, no business logic
+│   ├── (auth)/                # Route groups as needed
+│   ├── (dashboard)/
+│   ├── layout.tsx
+│   ├── page.tsx
+│   └── api/                   # Route handlers only when BFF pattern is approved
+│
+├── features/                  # One folder per product domain
+│   └── <feature>/
+│       ├── api/               # the project's server-state library hooks (useQuery, useMutation)
+│       ├── components/        # Feature-scoped UI components
+│       ├── hooks/             # Feature-scoped custom hooks (non-data)
+│       ├── schemas/           # Zod validation schemas
+│       ├── services/          # Business logic isolated from UI
+│       ├── store/             # the project's client-state store slices for this feature only
+│       ├── types/             # TypeScript interfaces and types
+│       └── pages/             # Page-level components wired together
+│
+├── shared/
+│   ├── components/            # Reusable UI primitives (buttons, layouts, data-display)
+│   ├── hooks/                 # Global hooks (useDebounce, useMediaQuery)
+│   ├── utils/                 # Pure utility functions
+│   ├── services/              # Shared abstractions (http client, analytics)
+│   ├── types/                 # Global TypeScript types
+│   ├── constants/             # Application-wide constants
+│   └── validations/           # Shared Zod schemas
+│
+├── stores/                    # Global the project's client-state store store composition
+├── providers/                 # Context providers and app-level wrappers
+├── lib/                       # Third-party library configuration and adapters
+├── styles/                    # Global CSS, utility-first styling config, design tokens
+├── config/                    # Environment-aware application config
+└── tests/                     # Integration and E2E test suites
+```
+
+## Layer Rules
+
+### `app/` - Routing Shell
+
+- Define routes, layouts, metadata, and loading/error boundaries
+- Import and render feature `pages/` components - thin composition only
+- **Forbidden:** business logic, direct `fetch`, complex state, domain validation
+
+### feature-scoped modules - Domain Ownership
+
+- Everything specific to one product domain lives here
+- Features do not import from other features' internals - use `shared/` or public feature APIs
+- Cross-feature navigation via routes, not deep imports
+
+### `shared/` - Cross-Cutting Reuse
+
+- Promote to `shared/` only when **two or more features** need the same abstraction
+- the design system wrappers and design-system primitives live here
+- No feature-specific business logic
+
+## State Management Rules
+
+| State type | Location | Tool |
+|------------|----------|------|
+| Server/async data | `features/<feature>/api/` | the project's server-state library |
+| Feature UI state | `features/<feature>/store/` | the project's client-state store |
+| Global UI state | `stores/` | the project's client-state store |
+| Form state | Component + RHF | React Hook Form |
+| URL state | Search params | Next.js router |
+
+**Hard rule:** Server state never lives in the project's client-state store. Cache invalidation goes through QueryClient.
+
+## Data Fetching Pattern
+
+```typescript
+// features/orders/api/use-orders.ts
+export function useOrders(filters: OrderFilters) {
+  return useQuery({
+    queryKey: ['orders', filters],
+    queryFn: () => ordersService.list(filters),
+  });
+}
+```
+
+- Query keys are hierarchical and include all filter dependencies
+- Mutations invalidate affected query keys explicitly
+- Optimistic updates only with documented rollback on failure
+
+## Component Rules
+
+- Presentational components receive data via props - no embedded fetching
+- Container/page components wire hooks to presentational children
+- Max ~200 lines per component file - split when exceeded
+- Prop drilling beyond two levels → context, the project's client-state store, or composition
+
+## Import Boundaries
+
+```
+app/           → features/, shared/, providers/
+features/X/    → shared/, lib/, config/ - NOT features/Y/ internals
+shared/        → lib/, config/ - NOT features/
+lib/           → external packages only
+```
+
+## Naming Conventions
+
+| Artifact | Convention | Example |
+|----------|------------|---------|
+| Feature folder | kebab-case | `user-settings/` |
+| Components | PascalCase file and export | `OrderSummary.tsx` |
+| Hooks | camelCase with `use` prefix | `useOrderSummary.ts` |
+| Services | camelCase | `ordersService.ts` |
+| Types | PascalCase | `Order`, `OrderFilters` |
+| Query keys | tuple arrays | `['orders', { status }]` |
+
+## Testing Placement
+
+| Test type | Location |
+|-----------|----------|
+| Hook/service unit tests | Adjacent `*.test.ts` or `features/<feature>/__tests__/` |
+| Component tests | Adjacent to component or feature `__tests__/` |
+| E2E | `tests/e2e/` |
+
+## Anti-Architecture (Forbidden)
+
+- Business logic in `app/` route files
+- `useEffect` + `fetch` for server data
+- Feature A importing `features/B/components/internal-widget`
+- Global CSS overrides that break design tokens
+- Duplicate API clients per feature - use `shared/services/http`
+
+## Hard limitations (non-negotiable)
+
+These boundaries are non-negotiable. Violating any item is a hard stop - surface the issue and wait for human direction.
+
+## Code Quality
+
+- **Never** place business logic inside a React component - logic belongs in hooks or services
+- **Never** use `any` as a TypeScript type - every type must be explicit and intentional
+- **Never** fetch data directly inside a component body outside of the project's server-state library
+- **Never** use `useEffect` for data fetching when the project's server-state library applies
+
+## Styling and Design
+
+- **Never** use inline styles for anything other than dynamically computed values
+- **Never** hard-code color values, spacing values, or font sizes outside the design token system
+- **Never** proceed to implementation without reviewing the design spec or existing component library
+- **Never** fork the design system without documented design system justification
+
+## Forms and Validation
+
+- **Never** ship a form without client-side validation (Zod + React Hook Form)
+- **Never** assume server-side validation exists - confirm and mirror rules on client
+- **Never** display raw API error payloads to users without mapping to actionable copy
+
+## Security
+
+- **Never** render user-supplied content as raw HTML without sanitization
+- **Never** store tokens or secrets in localStorage unless explicitly approved by Security Engineer
+- **Never** expose API keys or secrets in client-side code or `public client env prefixes` variables inappropriately
+
+## State Management
+
+- **Never** store server state in the project's client-state store - server state belongs in the project's server-state library
+- **Never** duplicate cache invalidation logic in ad-hoc `fetch` calls
+- **Never** use `key={index}` for lists with dynamic order or CRUD operations
+
+## Accessibility
+
+- **Never** ship interactive elements without accessible names and keyboard support
+- **Never** rely solely on color to convey meaning
+- **Never** skip focus management in modals, dialogs, and multi-step flows
+
+## Process
+
+- **Never** invent API endpoints or response shapes not in the contract
+- **Never** mark complete without loading, error, and success states on async views
+- **Never** merge, deploy, or push without explicit human instruction
+- **Never** proceed past ambiguous requirements - surface and ask
 
 ## Scope
 
-**In scope:** UI components, client state, forms, accessibility, client-side validation, API consumption, UI tests.
+- **Never** implement backend logic, database access, or server-only security controls in the client as a workaround
+- **Never** modify backend API contracts - escalate to Backend Engineer
+- **Never** make cross-feature architectural changes without human review
 
-**Out of scope:** Backend APIs, database design, infrastructure, deployment, merge/push.
+## Anti-patterns (explicitly banned)
 
-## Constraints
+The following patterns are explicitly banned. Flag and propose an alternative before proceeding.
 
-- No stack mandates. Adapt patterns to React, Vue, Angular, Svelte, or mobile UI as applicable.
-- Never render untrusted HTML without sanitization.
-- Never invent API fields or endpoints not documented in the task.
-- Prefer reuse of existing design system components before creating new ones.
+## State and Data
+
+| Anti-pattern | Why it fails | Alternative |
+|--------------|--------------|-------------|
+| **useEffect for data fetching** | Race conditions, no cache, duplicate requests | the project's server-state library hooks in `features/<feature>/api/` |
+| **Server state in the project's client-state store** | Stale data, double source of truth | the project's server-state library with explicit invalidation |
+| **Fetching in component body** | Untestable, inconsistent loading/error handling | Custom query hooks |
+| **Prop drilling beyond two levels** | Fragile, hard to refactor | Context, the project's client-state store, or component composition |
+
+## Components
+
+| Anti-pattern | Why it fails | Alternative |
+|--------------|--------------|-------------|
+| **Component files >200 lines** | Hard to test and reason about | Split presentational vs container; extract hooks |
+| **Business logic in components** | Untestable, duplicated across views | `hooks/` and `services/` |
+| **God components** | One file handles fetch, validate, render, navigate | Layered architecture per feature folder |
+| **key={index} in lists** | Incorrect reconciliation, state bugs on reorder | Stable unique IDs from domain entities |
+
+## UI States
+
+| Anti-pattern | Why it fails | Alternative |
+|--------------|--------------|-------------|
+| **Unhandled loading/error states** | Broken UX, silent failures | Loading skeleton, error boundary/retry, empty state |
+| **Infinite spinners** | No timeout or error path | Query `error` and `isLoading` with fallback UI |
+| **Generic "Something went wrong"** | User cannot recover | Map API error codes to actionable messages |
+
+## Styling
+
+| Anti-pattern | Why it fails | Alternative |
+|--------------|--------------|-------------|
+| **Inline styles for static layout** | Inconsistent with design system | utility classes and tokens |
+| **Magic color/spacing values** | Theme breaks, dark mode failures | Design tokens in utility-first styling config |
+| **Global CSS overrides** | Unpredictable cascade | Component-scoped utility-first styling, design system variants |
+
+## Forms
+
+| Anti-pattern | Why it fails | Alternative |
+|--------------|--------------|-------------|
+| **Uncontrolled forms without validation** | Bad data reaches API | the project's form and validation stack |
+| **Submit-only validation** | Poor UX, wasted round-trips | Field-level validation on blur/change |
+| **Ignoring server validation errors** | Client/server drift | Map server error envelope to form fields |
+
+## Performance
+
+| Anti-pattern | Why it fails | Alternative |
+|--------------|--------------|-------------|
+| **Importing heavy libs in root layout** | Bundle bloat | Dynamic import, route-level code splitting |
+| **Re-render storms** | Janky UI | Memoization where measured; stable query keys |
+| **Unoptimized images** | Poor LCP | `optimized image components` with sizes and priority |
+
+## Accessibility
+
+| Anti-pattern | Why it fails | Alternative |
+|--------------|--------------|-------------|
+| **div onClick without keyboard** | WCAG violation | `button` or proper role + tabIndex + handlers |
+| **Missing form labels** | Screen reader failure | Explicit `<label>` or `aria-label` |
+| **Color-only status indicators** | Inaccessible to color-blind users | Icon + text + color |
+| **Ignoring prefers-reduced-motion** | Vestibular accessibility failure | Conditional the animation library |
+
+## Architecture
+
+| Anti-pattern | Why it fails | Alternative |
+|--------------|--------------|-------------|
+| **Business logic in app/ routes** | Violates App Router boundaries | Feature `pages/` and `services/` |
+| **Cross-feature deep imports** | Tight coupling | `shared/` abstractions or route navigation |
+| **Duplicate HTTP clients** | Inconsistent auth and error handling | `shared/services/http` |
+
+## Testing
+
+| Anti-pattern | Why it fails | Alternative |
+|--------------|--------------|-------------|
+| **Testing implementation details** | Brittle tests | Assert user-visible behavior |
+| **Snapshot-only tests** | False confidence | Interaction and state assertions |
+| **Skipping a11y checks** | Production accessibility debt | axe-core in CI, manual keyboard pass |
+
+## When blocked
+
+- **Missing or ambiguous design** → request design spec or documented assumptions; stop until approved.
+- **API contract gap** → escalate to backend owner; do not invent endpoints or response shapes.
+- **Accessibility conflict with design** → flag and propose accessible alternative.
+- **Cross-feature architectural change** → escalate to human lead; do not refactor silently.
+
+## Git and review discipline
+
+Adapt branch names to your team's convention (`main`/`develop`, trunk-based, etc.). The **discipline** matters more than the label.
+
+### Before starting work
+
+1. Confirm the task has a ticket or tracked ID when your team requires one.
+2. Sync from the integration branch your team uses.
+3. Identify the **single concept** being implemented. Multiple independent concepts → surface and wait for priority before branching.
+4. Create a branch: `<type>/<ticket-id>-<short-description>` (e.g. `feat/AUTH-42-refresh-token-rotation`).
+
+### During implementation
+
+5. Implement **one concept at a time**.
+6. Keep each commit below **150 lines** of meaningful change (team standard may vary; stay reviewable).
+7. Stage only files for the current concept. Prefer `git add <file>` or `git add -p` over blind `git add .`.
+8. Write the commit message **before** committing. If you cannot write a clear message, the commit is too large or mixed.
+9. After each commit: code compiles; unit tests for this concept pass.
+
+### Before opening a PR
+
+10. Rebase on latest integration branch. Resolve conflicts via rebase, not merge commits from integration into feature.
+11. Review full diff: no debug logs, commented-out code, or temporary hacks.
+12. Complete `checklist.md` for this package.
+13. Run the full test suite locally or in CI.
+14. Human engineer approves every merge. AI output is advisory until reviewed.
+
+## Handoff requirements
+
+Before marking work complete, produce an implementation summary:
+
+| Section | Content |
+|---------|---------|
+| **What changed** | Files touched and behavior change in plain language |
+| **Why** | Link to requirement, ticket, or decision |
+| **Test evidence** | Commands run and results |
+| **Integration points** | APIs, auth, env vars, migrations, feature flags |
+| **Open questions** | Ambiguity deferred to human decision |
+| **Rollback** | How to revert safely if this ships incorrectly |
+
+Reference `checklist.md` — every item checked or explicitly flagged with owner.

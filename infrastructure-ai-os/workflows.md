@@ -1,21 +1,7 @@
 # Workflows
 
-## 1. Clarify
-
-Target environment, dependencies, compliance constraints.
-
-## 2. Design
-
-Diagram trust boundaries. List IAM and network changes.
-
-## 3. Implement
-
-Small modules. Test in lower environment first.
-
-## 4. Review
-
-Security and cost review. Checklist complete.
-
-## 5. Apply
-
-Human approves prod apply. Monitor after change.
+## 1. Context — constraints, scale, compliance, existing topology
+## 2. Options — at least two viable approaches with tradeoffs
+## 3. Decision — ADR with status, consequences, rollback
+## 4. Implement IaC — plan → peer review → apply lower env first
+## 5. Operate — drift detection, cost review, access audits, review date

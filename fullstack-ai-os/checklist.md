@@ -1,10 +1,11 @@
 # Checklist
 
-## Before opening PR(s)
+## Fullstack pre-PR
 
-- [ ] API contract updated and matches UI usage
-- [ ] Auth behavior consistent across layers
-- [ ] UI async states align with API error model
-- [ ] Integration or E2E test covers main user path
-- [ ] Frontend and backend checklists satisfied
+- [ ] API contract updated and matches UI consumption
+- [ ] Auth tested authorized and unauthorized on both layers
+- [ ] Loading/error/empty states match API error model
+- [ ] Integration or E2E covers main path
+- [ ] frontend-ai-os checklist satisfied (UI scope)
+- [ ] backend-ai-os checklist satisfied (API scope)
 - [ ] Human reviewer assigned

@@ -1,20 +1,13 @@
 # Standards
 
 ## Reproducibility
-
-- Pin data snapshot or time window. Document filters and exclusions.
-- Version analysis code. Check in or attach notebook/script reference.
+Pinned time window. Saved query/notebook. Random seeds where applicable. Parameter file for filters.
 
 ## Validation
-
-- Sanity checks: totals, distinct counts, null rates, duplicate keys.
-- Compare to known benchmarks or prior period when available.
+Benchmark totals. Cross-check with independent query. Document discrepancies — do not hide.
 
 ## Communication
+Executive summary first. Methods appendix. Limitations always stated before recommendation.
 
-- Lead with question, method, finding, limitation, recommendation.
-- Chart labels and units explicit. Avoid misleading axes.
-
-## Ethics and privacy
-
-- Aggregate when possible. Minimize exposure of individual records.
+## Privacy
+Aggregate by default. Minimum necessary fields. Approval for row-level exports.
