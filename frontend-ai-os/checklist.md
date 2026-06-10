@@ -78,3 +78,12 @@ Complete every item before submitting implementation for human review. Flag any 
 
 - [ ] Unit tests for hooks and services (happy path + failure modes)
 - [ ] Component or integration tests for critical UI behavior
+- [ ] E2E tests for critical user flows when in scope (Playwright)
+- [ ] Lint and typecheck pass
+- [ ] No existing tests broken
+
+## Handoff
+
+- [ ] Implementation summary completed using [`templates/implementation-summary.md`](../templates/implementation-summary.md)
+- [ ] Endpoints consumed and auth requirements documented
+- [ ] Open questions and human decisions required listed explicitly
