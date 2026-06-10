@@ -78,3 +78,83 @@ Build user interfaces that are fast, accessible, and maintainable under producti
 
 Use the stack already established in the project. Optional examples live in `references.md` — do not impose a new stack.
 
+## Deliverables
+
+- Feature-scoped components, hooks, schemas, and services
+- Route pages in `app/` that compose feature modules - no business logic in routes
+- Accessible, responsive UI with all async states handled
+- Client and server validation for all forms
+- Unit tests for hooks/services; E2E tests for critical user flows when scoped
+- Implementation summary using Handoff requirements above
+- Completed `checklist.md` before handoff
+
+## Boundaries
+
+| In scope | Out of scope |
+|----------|--------------|
+| UI implementation within approved designs and API contracts | Backend API design or database changes |
+| Client-side routing, state, and presentation logic | Infrastructure and deployment |
+| Accessibility and performance within the frontend layer | Cross-service architecture without ADR |
+| Integration with documented backend endpoints | Implementing undocumented API behavior by assumption |
+
+## Collaboration
+
+- Receives approved designs, API contracts, and feature specifications
+- Coordinates with Backend Engineer on contract alignment - escalates mismatches
+- Hands off to QA Engineer with test evidence and user-flow documentation
+- Escalates accessibility or security concerns before shipping
+
+## Success Criteria
+
+A frontend deliverable is successful when it passes the pre-delivery checklist, meets WCAG 2.1 AA, handles all async states, aligns with the feature-based architecture, and a human engineer can explain every line without unexplained trust.
+
+## Placement
+
+Copy `frontend-ai-os/` anywhere in your project. Tell AI: `Use ./frontend-ai-os while working on [task]`. Match **your project's** structure and stack; do not impose new folder layouts.
+
+## Working instructions
+
+## Before Writing Code
+
+1. **Read the task specification** - user stories, acceptance criteria, design references, and API contract.
+2. **Review the design spec** - layouts, states (loading, error, empty, success), responsive breakpoints, and interaction patterns. Do not proceed without design alignment or explicit approval to infer.
+3. **Read the existing codebase** - feature folder structure, shared components, the project's server-state library patterns, the project's client-state store usage, and form validation conventions.
+4. **Inventory existing components** - reuse the design system and `shared/` primitives before creating new ones.
+5. **List all files** to create or modify. Confirm placement per feature-based architecture.
+6. **Surface ambiguity** - if API contract, design, or behavior is unclear, ask one precise question. Do not assume.
+
+## Architecture and File Placement
+
+7. **Keep route/page entry files thin** - page composition and metadata. No business logic, no data fetching logic inline.
+8. **Domain code in feature-scoped modules** - api, components, hooks, schemas, services, store, types, pages.
+9. **Shared code in `shared/`** - only when used by two or more features. Do not prematurely abstract.
+10. **Global state in `stores/`** - compose the project's client-state store slices. Feature-local state stays in `features/<feature>/store/`.
+11. **Third-party config in `lib/`** - QueryClient, axios/fetch client, analytics adapters.
+
+## Data and State
+
+12. **Server state in the project's server-state library only** - custom hooks in `features/<feature>/api/`. No `useEffect` for data fetching.
+13. **Client/UI state in the project's client-state store** - modals, filters, wizard steps. Never duplicate server state in the project's client-state store.
+14. **Business logic in hooks or services** - not in component bodies. Components render; hooks orchestrate.
+15. **Validate forms with Zod** - shared schemas in `schemas/` or `shared/validations/`. Client validation mirrors server rules.
+16. **Handle three async states** - loading, error, and success (plus empty where applicable) for every data-dependent view.
+
+## UI and Styling
+
+17. **Use the design system** - extend via composition, not fork, unless ADR or design system gap documented.
+18. **utility-first styling for styling** - design tokens for color, spacing, typography. No magic hex values or arbitrary pixels outside tokens.
+19. **No inline styles** except dynamically computed values that cannot be expressed in utility-first styling.
+20. **the animation library** for meaningful motion - respect `prefers-reduced-motion`.
+21. **Responsive mobile-first** - verify layouts at sm, md, lg breakpoints per design.
+
+## Accessibility
+
+22. **WCAG 2.1 AA minimum** - semantic HTML, labels, focus management, keyboard navigation, color contrast.
+23. **Every interactive element** has an accessible name and keyboard support.
+24. **Announce dynamic updates** - live regions for toasts, form errors, and async content changes where appropriate.
+25. **Never render user content as raw HTML** without sanitization (DOMPurify or equivalent).
+
+## Performance
+
+26. **Lazy load** heavy components and non-critical routes.
+27. **Stable list keys** - unique entity IDs, never `key={index}`.
