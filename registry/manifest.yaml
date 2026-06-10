@@ -198,3 +198,103 @@ assets:
     path: agents/qa-engineer/prompts/primary.md
     track: shared
     taskTypes: [test]
+    stage: 3
+    dependsOn: [global-system-prompt, standards.testing]
+
+  - id: qa-engineer.checklist
+    path: agents/qa-engineer/checklists/pre-release.md
+    track: shared
+    taskTypes: [review, test]
+    stage: 6
+    dependsOn: []
+
+  # Security
+  - id: stage-05-security-review
+    path: workflows/prompts/stage-05-security-review.md
+    track: shared
+    taskTypes: [security, review]
+    stage: 5
+    dependsOn: [global-system-prompt, standards.security]
+
+  - id: security-engineer.checklist
+    path: agents/security-engineer/checklists/security-review.md
+    track: shared
+    taskTypes: [security]
+    dependsOn: []
+
+  # Workflow stages
+  - id: stage-01-requirement
+    path: workflows/prompts/stage-01-requirement-clarity.md
+    track: shared
+    taskTypes: [clarify]
+    stage: 1
+    dependsOn: [global-system-prompt, ambiguity-resolution]
+
+  - id: stage-03-test-spec
+    path: workflows/prompts/stage-03-test-specification.md
+    track: shared
+    taskTypes: [test]
+    stage: 3
+    dependsOn: [global-system-prompt, qa-engineer.primary]
+
+  - id: stage-04-implementation
+    path: workflows/prompts/stage-04-implementation.md
+    track: shared
+    taskTypes: [implement]
+    stage: 4
+    dependsOn: [global-system-prompt]
+
+  - id: stage-06-qa
+    path: workflows/prompts/stage-06-qa-verification.md
+    track: shared
+    taskTypes: [review, test]
+    stage: 6
+    dependsOn: [global-system-prompt, qa-engineer.checklist]
+
+  - id: stage-08-deploy
+    path: workflows/prompts/stage-08-production-deployment.md
+    track: shared
+    taskTypes: [deploy]
+    stage: 8
+    dependsOn: [global-system-prompt]
+
+  - id: sre-engineer.checklist
+    path: agents/sre-engineer/checklists/pre-production.md
+    track: shared
+    taskTypes: [deploy]
+    stage: 8
+    dependsOn: []
+
+  # DevRel
+  - id: devrel-engineer.primary
+    path: agents/devrel-engineer/prompts/primary.md
+    track: shared
+    taskTypes: [docs]
+    stage: 7
+    dependsOn: [global-system-prompt]
+
+  - id: stage-07-docs
+    path: workflows/prompts/stage-07-documentation.md
+    track: shared
+    taskTypes: [docs]
+    stage: 7
+    dependsOn: [global-system-prompt, devrel-engineer.primary]
+
+  # Single task
+  - id: path.single-task
+    path: docs/paths/single-task.md
+    track: single-task
+    taskTypes: [debug, refactor, security, review, test, docs, deploy, clarify]
+    dependsOn: []
+
+  - id: dependency-audit
+    path: workflows/prompts/dependency-audit.md
+    track: shared
+    taskTypes: [security]
+    dependsOn: [global-system-prompt]
+
+  - id: hotfix-incident
+    path: workflows/prompts/hotfix-incident-response.md
+    track: shared
+    taskTypes: [debug, deploy]
+    dependsOn: [global-system-prompt, debugging-prompt]
