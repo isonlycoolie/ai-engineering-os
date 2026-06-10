@@ -1,0 +1,79 @@
+{
+  "track": "frontend",
+  "description": "UI engineers building frontend with no backend changes in scope",
+  "required": [
+    "project-context",
+    "global-system-prompt",
+    "prompting-rules",
+    "human-review-checklist",
+    "frontend-engineer.primary",
+    "standards.frontend",
+    "standards.security",
+    "standards.testing",
+    "git-commit-discipline",
+    "git-branch-discipline",
+    "pull-request",
+    "frontend-engineer.checklist"
+  ],
+  "taskBundles": {
+    "implement": [
+      "project-context",
+      "global-system-prompt",
+      "frontend-engineer.primary",
+      "standards.frontend",
+      "git-commit-discipline",
+      "frontend-engineer.checklist"
+    ],
+    "review": [
+      "global-system-prompt",
+      "frontend-engineer.review",
+      "code-review-prompt",
+      "human-review-checklist"
+    ],
+    "security": [
+      "global-system-prompt",
+      "stage-05-security-review",
+      "security-engineer.checklist"
+    ],
+    "test": [
+      "global-system-prompt",
+      "stage-03-test-spec",
+      "qa-engineer.checklist"
+    ],
+    "clarify": [
+      "global-system-prompt",
+      "ambiguity-resolution",
+      "stage-01-requirement"
+    ],
+    "debug": [
+      "global-system-prompt",
+      "debugging-prompt",
+      "project-context"
+    ],
+    "refactor": [
+      "global-system-prompt",
+      "refactor-prompt",
+      "git-commit-discipline"
+    ]
+  },
+  "stages": {
+    "feature": [1, 3, 4, 5, 6],
+    "skip": [7, 8]
+  },
+  "optional": {
+    "architecture": ["architecture-prompt"],
+    "docs": ["devrel-engineer.primary", "stage-07-docs"],
+    "deploy": ["stage-08-deploy", "sre-engineer.checklist"]
+  },
+  "skippedByDefault": [
+    "backend-engineer.primary",
+    "standards.database",
+    "standards.api",
+    "stage-08-deploy"
+  ],
+  "skipReasons": {
+    "backend-engineer.primary": "Backend track not selected. Use backend or fullstack track for API work.",
+    "standards.database": "No database work in frontend-only scope.",
+    "stage-08-deploy": "Deploy skipped. Set capabilities.deploy: true in ai-os.config.yaml or use fullstack track."
+  }
+}
