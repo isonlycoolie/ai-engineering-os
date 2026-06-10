@@ -78,3 +78,83 @@ Production is not a destination. It is an operating condition with defined objec
 - Deployment pipeline reliability
 - Mean time to recovery (MTTR) tracking
 
+## Deliverables
+
+| Deliverable | When | Quality bar |
+|-------------|------|-------------|
+| SLO definition | Before production deployment | Availability, latency, and error rate targets documented |
+| Alert rules | Before production deployment | Each SLO breach has a routed alert |
+| Runbook | Per critical alert | Step-by-step response with rollback and escalation |
+| Pre-production sign-off | Stage 8 gate | `checklists/pre-production.md` complete |
+| Post-deploy verification | After every deployment | Smoke tests pass; dashboards reviewed |
+
+## Stack and Tools
+
+- Observability: structured logs, metrics, distributed tracing per `standards/observability.md`
+- Alerting: routed to correct team with actionable thresholds
+- Infrastructure: Docker, Kubernetes, Terraform (as applicable to the service)
+- Secrets: vault-based management - never version-controlled env files
+
+## Workflow Position
+
+SRE operates at **Stage 8 - Production Deployment** in the feature delivery workflow. Input is documentation-complete, QA-verified, security-cleared implementation. Output is a healthy production deployment with human confirmation.
+
+## When to Escalate
+
+- Pre-production checklist items cannot be satisfied without architectural change
+- Load test fails at expected peak traffic
+- Rollback procedure is untested or exceeds five-minute target
+- Critical alerts lack runbooks or correct routing
+
+## Placement
+
+Copy `devops-ai-os/` anywhere in your project. Tell AI: `Use ./devops-ai-os while working on [task]`. Match **your project's** structure and stack; do not impose new folder layouts.
+
+## Working instructions
+
+Every service in production must meet the reliability bar before deployment. Follow these steps for each service or deployment.
+
+## Service Readiness
+
+1. **Define SLOs** - availability, latency (p50/p95/p99), and error rate targets. Document them where operators can find them.
+2. **Configure alerts** for each SLO breach and for symptoms that predict breaches (saturation, queue depth, error spikes).
+3. **Write a runbook** for every critical alert - step-by-step diagnosis, mitigation, rollback, and escalation.
+4. **Implement health checks** that reflect actual service health (dependencies, not just process uptime).
+5. **Ensure structured logs** with correlation IDs tracing a single request through the system per `standards/observability.md`.
+6. **Configure distributed tracing** for cross-service operations.
+7. **Document and test rollback** - any deployment must be revertible within five minutes.
+8. **Document and test backup/restore** for stateful components.
+
+## Pre-Production Gate
+
+9. Complete `checklists/pre-production.md` - no exceptions for critical items.
+10. Execute load test against expected peak traffic; record results.
+11. Confirm secrets are in an approved vault - not in version control.
+12. Review deployment pipeline reliability (CI/CD success rate, artifact immutability).
+
+## Deployment
+
+13. Deploy through the CI/CD pipeline - not manual hot patches except documented emergencies.
+14. Run post-deployment smoke tests immediately after deploy.
+15. Review monitoring dashboards for error rate, latency, and saturation for at least one observation window.
+16. Confirm alerts are firing correctly (synthetic or staged breach test where safe).
+
+## Incidents
+
+17. Follow the incident response process: acknowledge, mitigate, communicate, postmortem.
+18. Track MTTR for every incident; feed learnings back into runbooks and SLOs.
+
+## Collaboration
+
+19. Block deployment when pre-production checklist fails - escalate with specific gaps.
+20. Coordinate with Security Engineer on secrets, access, and production access patterns.
+
+## Production bar (every service)
+
+Every service in production must have:
+
+1. **Defined SLOs** — availability, latency, error rate targets documented
+2. **Alerts** for each SLO breach, routed to the owning team
+3. **Runbooks** — step-by-step response per critical alert including rollback and escalation
+4. **Health checks** reflecting real dependency health, not process-up only
+5. **Structured logs** with correlation IDs tracing requests across services
