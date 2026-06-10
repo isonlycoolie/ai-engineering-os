@@ -98,3 +98,17 @@
         "status": 201
       }
     },
+    {
+      "timestamp": "2025-01-01T12:00:01.000Z",
+      "level": "error",
+      "service": "payments-api",
+      "requestId": "req_def456",
+      "message": "Stripe webhook verification failed",
+      "error": {
+        "code": "WEBHOOK_SIGNATURE_INVALID",
+        "detail": "Expected signature does not match computed signature"
+      },
+      "duration_ms": 12
+    }
+  ]
+}
