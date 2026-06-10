@@ -1,3 +1,0 @@
-- [standards/api.md](../standards/api.md)
-- [standards/error-handling.md](../standards/error-handling.md)
-- [03 - Feature Delivery](../docs/developer-journey/03-feature-delivery.md)
