@@ -98,3 +98,6 @@ Complete this section in under 15 minutes for a new developer.
 
 ## Verification log
 
+| Sample / section | Verified by | Environment | Date | Result |
+|------------------|-------------|-------------|------|--------|
+| Quickstart | [agent/engineer] | staging | YYYY-MM-DD | pass |
