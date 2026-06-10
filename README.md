@@ -28,19 +28,6 @@
 | Reviewability | Git discipline, PR limits, and human checkpoints at every stage |
 | Track-aware delivery | Frontend, backend, full-stack, or single-task paths without noise |
 
-## Choose Your Path
-
-| I am building... | Entry point |
-|------------------|-------------|
-| Frontend only | [docs/paths/frontend-only.md](docs/paths/frontend-only.md) |
-| Backend only | [docs/paths/backend-only.md](docs/paths/backend-only.md) |
-| Full stack | [docs/paths/full-stack.md](docs/paths/full-stack.md) |
-| One specific task | [docs/paths/single-task.md](docs/paths/single-task.md) |
-
-**First time?** Read [docs/START-HERE.md](docs/START-HERE.md), then [docs/adopt-in-your-project.md](docs/adopt-in-your-project.md).
-
-**Using Cursor?** Configure [MCP](docs/mcp-setup.md) to auto-resolve prompts by track.
-
 ## Platform Capabilities
 
 | Layer | Location | Purpose |

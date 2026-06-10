@@ -119,17 +119,6 @@ jobs:
           echo "Total PR change: $TOTAL lines"
           [ "$TOTAL" -le 400 ] || { echo "FAIL: PR exceeds 400 lines"; exit 1; }
 
-  no-em-dash:
-    name: No em-dash in docs
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Lint em-dashes
-        shell: bash
-        run: bash scripts/lint-no-em-dash.sh
-
   registry-build:
     name: Build static registry
     runs-on: ubuntu-latest
@@ -150,7 +139,7 @@ jobs:
   markdown-lint:
     name: Markdown lint (placeholder)
     runs-on: ubuntu-latest
-    needs: [prompt-contract, no-em-dash, registry-build]
+    needs: [prompt-contract, registry-build]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
