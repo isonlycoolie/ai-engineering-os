@@ -1,0 +1,100 @@
+# Continuous integration for AI Engineering OS
+#
+# Validates prompt contract compliance and runs placeholder lint jobs.
+# Extend jobs as application code and tooling are added to the repository.
+
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  prompt-contract:
+    name: Validate prompt contract
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate prompt structure
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          REQUIRED_SECTIONS=(
+            "## Goal"
+            "## Scope"
+            "## Workflow"
+            "## What to look for"
+            "## Evidence bar"
+            "## Response rules"
+            "## Constraints"
+          )
+
+          PROMPT_PATHS=()
+          while IFS= read -r -d '' file; do
+            PROMPT_PATHS+=("$file")
+          done < <(find prompts agents workflows -type f \( -name '*.md' -path '*/prompts/*' -o -path 'workflows/prompts/*.md' -o -path 'prompts/*-prompt.md' \) -print0 2>/dev/null || true)
+
+          if [ ${#PROMPT_PATHS[@]} -eq 0 ]; then
+            echo "No prompt files found; skipping contract validation."
+            exit 0
+          fi
+
+          FAILED=0
+          for file in "${PROMPT_PATHS[@]}"; do
+            echo "Checking $file"
+            for section in "${REQUIRED_SECTIONS[@]}"; do
+              if ! grep -qF "$section" "$file"; then
+                echo "  MISSING: $section"
+                FAILED=1
+              fi
+            done
+          done
+
+          if [ "$FAILED" -ne 0 ]; then
+            echo ""
+            echo "Prompt contract validation failed."
+            echo "See prompts/PROMPT-CONTRACT.md and prompts/PROMPT-REVIEW-CHECKLIST.md"
+            exit 1
+          fi
+
+          echo "All prompt files passed contract validation."
+
+  commit-discipline:
+    name: Commit size check (150 lines)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Enforce commit size limit
+        run: |
+          set -euo pipefail
+          BASE="${{ github.event.pull_request.base.sha }}"
+          HEAD="${{ github.event.pull_request.head.sha }}"
+          FAILED=0
+          for SHA in $(git log --format="%H" "$BASE".."$HEAD"); do
+            STAT=$(git diff --stat "${SHA}^..${SHA}" \
+              -- ':!package-lock.json' ':!yarn.lock' ':!*.lock' ':!**/migrations/*' | tail -1)
+            LINES=$(echo "$STAT" | grep -oE '[0-9]+ insertion' | awk '{s+=$1} END {print s+0}')
+            DEL=$(echo "$STAT" | grep -oE '[0-9]+ deletion' | awk '{s+=$1} END {print s+0}')
+            TOTAL=$((LINES + DEL))
+            if [ "$TOTAL" -gt 150 ]; then
+              echo "FAIL: Commit $SHA exceeds 150 lines ($TOTAL)"
+              git log --oneline -1 "$SHA"
+              FAILED=1
+            fi
+          done
+          [ "$FAILED" -eq 0 ] || exit 1
