@@ -1,0 +1,100 @@
+# Curated asset manifest for AI Engineering OS registry
+# Used by scripts/build-registry.py and mcp-server resolver
+
+version: "1.1.0"
+
+assets:
+  # Shared (all tracks)
+  - id: global-system-prompt
+    path: prompts/global-system-prompt.md
+    track: shared
+    taskTypes: [implement, review, security, deploy, debug, clarify]
+    dependsOn: []
+
+  - id: project-context
+    path: templates/project-context.md
+    track: shared
+    taskTypes: [implement, review, security, deploy, debug, clarify]
+    dependsOn: []
+
+  - id: prompting-rules
+    path: ai-collaboration/prompting-rules.md
+    track: shared
+    taskTypes: [implement, clarify]
+    dependsOn: []
+
+  - id: human-review-checklist
+    path: ai-collaboration/human-review-checklist.md
+    track: shared
+    taskTypes: [implement, review]
+    dependsOn: []
+
+  - id: context-packing-guide
+    path: ai-collaboration/context-packing-guide.md
+    track: shared
+    taskTypes: [implement]
+    dependsOn: [project-context]
+
+  - id: git-commit-discipline
+    path: standards/git-commit-discipline.md
+    track: shared
+    taskTypes: [implement, review]
+    dependsOn: []
+
+  - id: git-branch-discipline
+    path: standards/git-branch-discipline.md
+    track: shared
+    taskTypes: [implement]
+    dependsOn: []
+
+  - id: pull-request
+    path: standards/pull-request.md
+    track: shared
+    taskTypes: [implement, review]
+    dependsOn: []
+
+  - id: git-workflow
+    path: standards/git-workflow.md
+    track: shared
+    taskTypes: [implement]
+    dependsOn: [git-commit-discipline, git-branch-discipline, pull-request]
+
+  - id: standards.security
+    path: standards/security.md
+    track: shared
+    taskTypes: [implement, security, review]
+    dependsOn: []
+
+  - id: standards.testing
+    path: standards/testing.md
+    track: shared
+    taskTypes: [implement, review]
+    dependsOn: []
+
+  # Global prompts
+  - id: ambiguity-resolution
+    path: prompts/ambiguity-resolution-prompt.md
+    track: shared
+    taskTypes: [clarify]
+    stage: 1
+    dependsOn: [global-system-prompt, project-context]
+
+  - id: architecture-prompt
+    path: prompts/architecture-prompt.md
+    track: shared
+    taskTypes: [clarify, implement]
+    stage: 2
+    dependsOn: [global-system-prompt]
+
+  - id: code-review-prompt
+    path: prompts/code-review-prompt.md
+    track: shared
+    taskTypes: [review]
+    dependsOn: [global-system-prompt]
+
+  - id: debugging-prompt
+    path: prompts/debugging-prompt.md
+    track: shared
+    taskTypes: [debug]
+    dependsOn: [global-system-prompt, project-context]
+
