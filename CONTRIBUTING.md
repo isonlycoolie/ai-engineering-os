@@ -1,49 +1,50 @@
-# Contributing to AI Engineering OS
+# Contributing
 
-## Principles
+Thank you for improving AI Engineering OS.
 
-1. Every prompt follows the [PROMPT-CONTRACT](prompts/PROMPT-CONTRACT.md)
-2. Prompts bind to the **developer's project** via project context, not to this OS repo
-3. No em-dashes (Unicode U+2014) in markdown or YAML. Use colon, period, or hyphen. CI enforces via `scripts/lint-no-em-dash.sh`
-4. Every workflow stage links from [03-feature-delivery.md](docs/developer-journey/03-feature-delivery.md) or a [path doc](docs/paths/)
+## What to contribute
 
-## Adding a Prompt
+Phase 1 focuses on **engineering guidance only**:
 
-1. Read [PROMPT-CONTRACT.md](prompts/PROMPT-CONTRACT.md)
-2. Opening lines must reference project context and open workspace
-3. Include: Goal, Scope, Workflow, What to look for, Evidence bar, Response rules, Constraints
-4. Run `scripts/validate-prompt-contract.ps1` and `scripts/lint-no-em-dash.ps1`
-5. Link from path doc, workflow playbook, or [06-decision-tree.md](docs/developer-journey/06-decision-tree.md)
+- Prompts that consistently improve AI outputs
+- Standards and checklists grounded in production practice
+- Workflows that stay concise and stack-agnostic
 
-## Adding an Agent
+## What not to contribute (Phase 1)
 
-```powershell
-.\scripts\scaffold-agent.ps1 -RoleSlug my-engineer -RoleTitle "My Engineer"
-```
+- MCP servers, install scripts, or runtime tooling
+- Project templates or starter kits
+- Mandated folder structures or stack-specific requirements in core package files
+- Automation frameworks or orchestration layers
 
-Agent `instructions.md` must inherit [git-workflow-instructions.md](agents/shared/git-workflow-instructions.md).
+## Package rules
 
-## Installing OS into a Project
+Each package under `*-ai-os/` must contain exactly these seven files:
 
-```powershell
-.\scripts\install-ai-os.ps1 -TargetPath C:\path\to\your-project
-```
+- `README.md`
+- `instructions.md`
+- `standards.md`
+- `workflows.md`
+- `prompts.md`
+- `checklist.md`
+- `references.md`
 
-## MCP Server
+Keep packages **self-contained**. Stack-specific examples belong in `references.md` only.
 
-Build and test locally:
+## Style
 
-```bash
-python scripts/build-registry.py
-cd mcp-server && npm install && npm run build
-```
+- Passive guidance ("when implementing UI...") not agent runtime language
+- No em-dashes (Unicode U+2014) in markdown
+- Small, focused pull requests
+- One concept per commit when possible
 
-See [docs/mcp-setup.md](docs/mcp-setup.md). When adding assets, update [registry/manifest.yaml](registry/manifest.yaml) and track profiles under [registry/profiles/](registry/profiles/).
+## Pull request checklist
 
-## Pull Requests
+- [ ] Changes are limited to package markdown or root docs
+- [ ] No install/MCP/template additions
+- [ ] Package still has exactly 7 files
+- [ ] Content is stack-agnostic in `instructions.md` and `standards.md`
 
-Use [templates/pr-description.md](templates/pr-description.md). Max 400 lines per [pull-request.md](standards/pull-request.md).
+## Legacy structure
 
-## Standards Changes
-
-Update `standards/*.md` and agent invocation blocks. v1.1 git standards live in `standards/git-*.md`.
+Pre-Phase-1 content (agents, starter kits, registry, MCP) lives on tag `v1-legacy`. Do not restore that structure on `main` without an explicit project decision.
