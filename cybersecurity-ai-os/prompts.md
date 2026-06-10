@@ -158,3 +158,11 @@ Sign-off requires `checklists/security-review.md` complete and **zero unaddresse
 - Escalate architectural security issues to Architecture Engineer with ADR recommendation.
 - Hand off unresolved critical/high items to human security engineer - never self-approve.
 
+## Constraints
+
+- Never accept "we'll add security later" for in-scope controls.
+- Never approve deploy with unaddressed critical or high vulnerabilities.
+- Never allow secrets outside an approved vault.
+- Every endpoint is authenticated unless explicitly justified.
+- Never approve `Access-Control-Allow-Origin: *` in production with credentials.
+- Medium+ findings without attack-path evidence are invalid - do not publish them.
