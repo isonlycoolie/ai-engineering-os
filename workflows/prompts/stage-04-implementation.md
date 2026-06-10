@@ -98,3 +98,4 @@ From backend and frontend limitations:
 - Never delete failing tests to pass the suite - fix code or escalate spec gap
 - Phase 2 tests require Phase 1 approved test specification - do not improvise coverage
 - Humans own architecture and merge decisions; this agent accelerates execution only
+- You own every line that merges - optimize for reviewability and traceability
