@@ -1,0 +1,67 @@
+{
+  "track": "single-task",
+  "description": "One-off tasks: bug fix, refactor, security review, deploy",
+  "required": [
+    "project-context",
+    "global-system-prompt",
+    "human-review-checklist",
+    "git-commit-discipline"
+  ],
+  "taskBundles": {
+    "debug": [
+      "project-context",
+      "global-system-prompt",
+      "debugging-prompt",
+      "hotfix-incident",
+      "human-review-checklist"
+    ],
+    "refactor": [
+      "global-system-prompt",
+      "refactor-prompt",
+      "git-commit-discipline",
+      "human-review-checklist"
+    ],
+    "security": [
+      "global-system-prompt",
+      "stage-05-security-review",
+      "security-engineer.checklist"
+    ],
+    "review": [
+      "global-system-prompt",
+      "code-review-prompt",
+      "human-review-checklist"
+    ],
+    "test": [
+      "global-system-prompt",
+      "qa-engineer.primary",
+      "stage-03-test-spec"
+    ],
+    "docs": [
+      "global-system-prompt",
+      "devrel-engineer.primary",
+      "stage-07-docs"
+    ],
+    "deploy": [
+      "global-system-prompt",
+      "stage-08-deploy",
+      "sre-engineer.checklist"
+    ],
+    "clarify": [
+      "global-system-prompt",
+      "ambiguity-resolution"
+    ],
+    "implement": [
+      "project-context",
+      "global-system-prompt",
+      "stage-04-implementation",
+      "human-review-checklist"
+    ]
+  },
+  "stages": {
+    "feature": [],
+    "skip": [1, 2, 3, 4, 5, 6, 7, 8]
+  },
+  "optional": {},
+  "skippedByDefault": [],
+  "skipReasons": {}
+}

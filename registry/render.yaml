@@ -1,0 +1,9 @@
+# Render Static Site - deploy registry/dist
+# https://render.com/docs/static-sites
+services:
+  - type: web
+    name: ai-engineering-os-registry
+    runtime: static
+    buildCommand: pip install pyyaml && python scripts/build-registry.py
+    staticPublishPath: ./registry/dist
+    # Static files served as-is; no SPA rewrite (registry.json must be reachable)
