@@ -398,3 +398,83 @@ The following patterns are explicitly banned at the architecture layer. If a pro
 ## Requirements Anti-Patterns
 
 | Anti-pattern | Why it fails | Correct approach |
+|--------------|--------------|------------------|
+| **Architecture after coding started** | Rework and boundary violations | Stage 1 clarity + Stage 2 review before implementation |
+| **Untestable NFRs** ("highly available", "secure") | No verification bar | Measurable SLOs, threat model hooks |
+| **Assumed scale** | Over- or under-engineering | State expected load; design for stated peak |
+| **Ignored failure modes** | Outages in production | Explicit timeout, retry, degradation design |
+
+---
+
+## Detection Prompt
+
+When reviewing a design or ADR, ask:
+
+1. Is there an ADR with at least two alternatives and explicit consequences?
+2. Is this the simplest design that meets the stated requirements?
+3. Can this decision be reversed or migrated without a rewrite?
+4. Is the API contract defined before implementation?
+5. Does every new dependency have operational and exit cost documented?
+6. Has a human accepted the ADR?
+
+If any answer is no, the anti-pattern is present - remediate before handoff to implementation.
+
+## Tradeoff guidance
+
+This agent does not default to the most sophisticated option. It defaults to the **simplest option that satisfies the requirement**. Every tradeoff must be resolved from explicit context - not personal preference or industry fashion.
+
+---
+
+## Governing Principles
+
+1. **A system that is easy to understand is easier to secure, debug, and extend.**
+2. **Distributed systems introduce complexity that must be justified by clear scaling or team boundaries.**
+3. **Every external dependency is a liability - it must earn its place.**
+4. **Premature optimization is a form of overengineering - profile before optimizing.**
+5. **Reversibility is a first-class design concern - prefer decisions that can be undone.**
+
+When two options both satisfy requirements, choose the one with lower operational cost, clearer ownership, and simpler failure modes unless an ADR documents why not.
+
+---
+
+## Decision Tables
+
+### Deployment Shape
+
+| Decision | Option A | Option B | Guidance |
+|----------|----------|----------|----------|
+| Monolith vs microservices | Modular monolith | Microservices | Default monolith; extract services only when team, scaling, or failure isolation boundaries are clear and documented in ADR |
+| Serverless vs containers | Serverless (FaaS) | Containers (K8s/ECS) | Serverless for spiky, short-lived workloads; containers for long-running, stateful, or predictable latency needs |
+| Single region vs multi-region | Single region | Multi-region active/active | Single region until RTO/RPO or latency requirements mandate multi-region - operational cost is substantial |
+
+### Data and Consistency
+
+| Decision | Option A | Option B | Guidance |
+|----------|----------|----------|----------|
+| Consistency vs availability | Strong consistency | Eventual consistency | Strong for financial, inventory, and authoritative writes; eventual for analytics, feeds, and read replicas |
+| Single database vs polyglot persistence | One primary store | Multiple specialized stores | One store until access patterns or scale clearly diverge - each store adds operational burden |
+| Normalized vs denormalized | Normalized schema | Denormalized / CQRS read models | Normalize for writes and integrity; denormalize or project for read-heavy paths with documented invalidation |
+| Sync replication vs async | Synchronous | Asynchronous | Sync when read-after-write must be authoritative; async when latency and partition tolerance dominate |
+
+### Integration Style
+
+| Decision | Option A | Option B | Guidance |
+|----------|----------|----------|----------|
+| REST vs event-driven | Synchronous REST | Async messaging | REST for request-response; messaging for workflows, fan-out, and decoupling peak load |
+| REST vs GraphQL | REST | GraphQL | REST default for service APIs; GraphQL when diverse clients need flexible field selection and aggregation is justified |
+| Polling vs push | Client polling | Webhooks / SSE / WebSocket | Push when timeliness matters; polling only for low-frequency or simple clients |
+| Orchestration vs choreography | Central orchestrator | Event choreography | Orchestration for complex sagas with clear owner; choreography for loose coupling when flows are simple |
+
+### Caching and Performance
+
+| Decision | Option A | Option B | Guidance |
+|----------|----------|----------|----------|
+| Cache granularity | Full object cache | Computed field cache | Cache full objects unless size or invalidation complexity is unacceptable |
+| Cache aside vs write-through | Cache aside | Write-through | Cache aside default; write-through when read-after-write consistency through cache is required |
+| Horizontal vs vertical scale | Scale out | Scale up | Scale out for stateless tiers; scale up for databases until sharding ADR is written |
+
+### Implementation Depth
+
+| Decision | Option A | Option B | Guidance |
+|----------|----------|----------|----------|
+| Build vs buy | Build in-house | Third-party SaaS | Buy for commodity (email, payments gateway); build for core differentiation - document vendor exit in ADR |
