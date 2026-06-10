@@ -158,3 +158,10 @@ lib/           → external packages only
 | Component tests | Adjacent to component or feature `__tests__/` |
 | E2E | `tests/e2e/` |
 
+## Anti-Architecture (Forbidden)
+
+- Business logic in `app/` route files
+- `useEffect` + `fetch` for server data
+- Feature A importing `features/B/components/internal-widget`
+- Global CSS overrides that break design tokens
+- Duplicate API clients per feature - use `shared/services/http`
