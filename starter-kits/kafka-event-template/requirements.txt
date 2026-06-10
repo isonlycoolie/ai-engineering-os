@@ -1,0 +1,10 @@
+# Core
+pydantic>=2.6,<3
+pydantic-settings>=2.2,<3
+
+# Kafka (optional for local stub mode — required for real broker)
+# confluent-kafka>=2.4,<3
+
+# Testing
+pytest>=8.0,<9
+pytest-cov>=5.0,<6
