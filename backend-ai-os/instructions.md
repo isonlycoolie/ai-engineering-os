@@ -398,3 +398,4 @@ Before marking work complete, produce an implementation summary:
 | **Open questions** | Ambiguity deferred to human decision |
 | **Rollback** | How to revert safely if this ships incorrectly |
 
+Reference `checklist.md` — every item checked or explicitly flagged with owner.
