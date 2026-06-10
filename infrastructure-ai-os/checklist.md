@@ -78,3 +78,41 @@ Complete before submitting ADR and implementation plan for human lead engineer r
 ---
 
 ## Observability (Design Layer)
+
+- [ ] Correlation ID propagation across service boundaries specified
+- [ ] Metrics: request rate, error rate, latency per endpoint planned
+- [ ] Health checks reflect dependency health - not only process uptime
+- [ ] Structured logging fields align with [`standards/observability.md`](../../standards/observability.md)
+
+---
+
+## Tradeoffs and Simplicity
+
+- [ ] Simplest design that satisfies requirements selected - or ADR explains why not
+- [ ] No premature microservices, optimization, or abstraction without forcing function
+- [ ] Tradeoff table used for significant decisions (see [`tradeoffs.md`](../tradeoffs.md))
+- [ ] Equal options escalated to human - not decided silently
+
+---
+
+## Handoff Readiness
+
+- [ ] Implementation plan linked with defined contracts
+- [ ] QA can derive test boundaries from specification and contract
+- [ ] Open questions and blockers listed with owners
+- [ ] No structural implementation started before this checklist complete
+
+---
+
+## Sign-Off
+
+| Role | Name | Date | Decision |
+|------|------|------|----------|
+| Architecture Engineer (agent) | | | Ready for human review / Revisions needed |
+| Lead engineer (human) | | | ADR Accepted / Revisions required |
+
+**Notes:**
+
+---
+
+*Incomplete checklists block handoff to implementation. ADR Status must be **Accepted** by human before implementation agents begin structural work.*
