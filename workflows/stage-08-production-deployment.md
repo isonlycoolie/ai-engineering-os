@@ -98,3 +98,11 @@ If post-deploy verification fails:
 3. Open incident if user impact occurred - see [incident-response.md](incident-response.md).
 4. Do not re-attempt deploy until root cause is identified.
 
+---
+
+## Related
+
+- [04 - Ship and Operate](../docs/developer-journey/04-ship-and-operate.md)
+- [templates/runbook.md](../agents/sre-engineer/templates/runbook.md)
+- [standards/observability.md](../standards/observability.md)
+- [03 - Feature Delivery](../docs/developer-journey/03-feature-delivery.md)
