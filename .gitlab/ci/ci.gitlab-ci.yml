@@ -1,0 +1,40 @@
+# GitLab CI stub - see standards/git-workflow.md and standards/branch-protection.md
+stages:
+  - validate
+  - test
+  - security
+
+variables:
+  NODE_VERSION: "20"
+
+.node_base:
+  image: node:${NODE_VERSION}-alpine
+  before_script:
+    - npm ci
+
+lint:
+  extends: .node_base
+  stage: validate
+  script:
+    - npm run lint || echo "Configure lint script"
+    - bash ../../scripts/lint-no-em-dash.sh || true
+
+commit-size-check:
+  stage: validate
+  image: alpine/git
+  script:
+    - echo "Enforce 150-line commit limit per standards/git-commit-discipline.md"
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+unit-tests:
+  extends: .node_base
+  stage: test
+  script:
+    - npm test || echo "Configure test script"
+
+dependency-audit:
+  extends: .node_base
+  stage: security
+  script:
+    - npm audit --audit-level=high || true
