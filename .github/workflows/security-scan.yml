@@ -1,0 +1,55 @@
+# Dependency and supply-chain security scan (stub)
+#
+# Replace placeholder steps with your organization's scanner (Dependabot, Snyk,
+# Trivy, npm audit, pip-audit, etc.) once application manifests exist.
+
+name: Security Scan
+
+on:
+  schedule:
+    # Weekly Monday 06:00 UTC
+    - cron: '0 6 * * 1'
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  dependency-audit:
+    name: Dependency audit (stub)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Node dependency audit placeholder
+        run: |
+          if [ -f package-lock.json ] || [ -f npm-shrinkwrap.json ]; then
+            npm audit --audit-level=moderate || true
+          else
+            echo "No Node lockfile found; skipping npm audit."
+          fi
+
+      - name: Python dependency audit placeholder
+        run: |
+          if [ -f requirements.txt ]; then
+            pip install pip-audit 2>/dev/null || pip3 install pip-audit 2>/dev/null || true
+            pip-audit -r requirements.txt || true
+          else
+            echo "No requirements.txt found; skipping pip-audit."
+          fi
+
+      - name: Container image scan placeholder
+        run: |
+          echo "Container scan stub - integrate Trivy or Grype when Docker images are built in CI."
+          echo "Example: trivy image --severity HIGH,CRITICAL \$IMAGE"
+
+      - name: Secret scanning reminder
+        run: |
+          echo "Enable GitHub secret scanning and push protection for this repository."
+          echo "Review agents/security-engineer/checklists/security-review.md before release."
