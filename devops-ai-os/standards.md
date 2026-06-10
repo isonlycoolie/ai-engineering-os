@@ -78,3 +78,10 @@ All agents inherit: [agents/shared/git-workflow-instructions.md](../agents/share
 | `scripts/git/open-pr.sh` | Create PR via GitHub CLI |
 | `scripts/git/open-pr.ps1` | PowerShell wrapper |
 
+## Agent Invocation
+
+| Task | Resource |
+|------|----------|
+| Daily workflow | [developer-journey/02-daily-practices.md](../docs/developer-journey/02-daily-practices.md) |
+| Hotfix | [workflows/hotfix.md](../workflows/hotfix.md) |
+| PR description | [templates/pr-description.md](../templates/pr-description.md) |
