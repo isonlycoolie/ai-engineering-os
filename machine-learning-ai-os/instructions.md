@@ -158,3 +158,18 @@ Adapt branch names to your team's convention (`main`/`develop`, trunk-based, etc
 12. Complete `checklist.md` for this package.
 13. Run the full test suite locally or in CI.
 14. Human engineer approves every merge. AI output is advisory until reviewed.
+
+## Handoff requirements
+
+Before marking work complete, produce an implementation summary:
+
+| Section | Content |
+|---------|---------|
+| **What changed** | Files touched and behavior change in plain language |
+| **Why** | Link to requirement, ticket, or decision |
+| **Test evidence** | Commands run and results |
+| **Integration points** | APIs, auth, env vars, migrations, feature flags |
+| **Open questions** | Ambiguity deferred to human decision |
+| **Rollback** | How to revert safely if this ships incorrectly |
+
+Reference `checklist.md` — every item checked or explicitly flagged with owner.
