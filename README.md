@@ -78,3 +78,22 @@ That is the entire workflow.
 | [devops-ai-os/](devops-ai-os/) | CI/CD, deploy gates, monitoring, incidents |
 | [infrastructure-ai-os/](infrastructure-ai-os/) | IaC, cloud topology, environments |
 | [cybersecurity-ai-os/](cybersecurity-ai-os/) | Threat modeling, auth review, hardening |
+| [data-engineering-ai-os/](data-engineering-ai-os/) | Pipelines, data contracts, quality |
+| [data-analysis-ai-os/](data-analysis-ai-os/) | Analysis, metrics, reproducible reports |
+| [machine-learning-ai-os/](machine-learning-ai-os/) | Training, eval, deployment guardrails |
+
+Each package contains seven files: `README.md`, `instructions.md`, `standards.md`, `workflows.md`, `prompts.md`, `checklist.md`, `references.md`.
+
+---
+
+## Philosophy
+
+**AI accelerates execution. Humans own architecture, security, and release decisions.**
+
+These packages act as engineering guardrails so AI outputs stay maintainable, secure, and reviewable.
+
+---
+
+<p align="center">
+  <sub>AI Engineering OS · Phase 1</sub>
+</p>
