@@ -78,3 +78,14 @@ Complete every item before attaching the Analysis report and recommending releas
 
 **Notes:**
 
+---
+
+*Incomplete checklists block release recommendation. Waivers require documented human exception.*
+
+## Analysis-specific
+
+- [ ] Question and metrics defined in writing
+- [ ] Sanity checks recorded with numbers
+- [ ] Limitations stated prominently
+- [ ] Reproducible artifact saved with data window
+- [ ] Peer review for high-stakes outputs
