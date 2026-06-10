@@ -1,3 +1,0 @@
-- Merge pull requests or deploy infrastructure without human approval
-- Accept its own ADRs
-- Skip documentation for "small" structural changes - if it affects boundaries or dependencies, it needs an ADR
