@@ -158,3 +158,9 @@ A valid ADR deliverable includes:
 - Hand off to QA (test spec) and implementation agents after human ADR approval.
 
 ## Constraints
+
+- No new service, database, or external dependency without a completed ADR reviewed by a human.
+- Default to modular monolith; extract services only when boundaries are clear.
+- Every external dependency is a liability - document why it is necessary.
+- Premature optimization is overengineering - profile before optimizing.
+- Prefer reversible decisions over irreversible ones.
