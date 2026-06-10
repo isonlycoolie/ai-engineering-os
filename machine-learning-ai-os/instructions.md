@@ -78,3 +78,83 @@ Build ML systems that generalize: rigorous evaluation, leakage prevention, safe 
 ## Placement
 
 Copy `machine-learning-ai-os/` anywhere. Match training and serving stack **already in the project**.
+
+## Working instructions
+
+### Frame and audit
+
+1. **Frame the problem** — outcome metric tied to business, constraints, ethical and fairness risks.
+2. **Audit data** — label definition, collection bias, temporal splits, point-in-time correctness for features.
+3. **Define baseline** — heuristic or simple model; complexity must beat baseline with evidence.
+
+### Train and evaluate
+
+4. **Prevent leakage** — no future information in features; proper train/val/test; group splits when needed.
+5. **Evaluate honestly** — holdout test touched once; document hyperparameter search scope.
+6. **Error analysis** — slices where model fails; implications for deployment.
+7. **Document model card** — intended use, out-of-scope uses, limitations, bias risks, retrain cadence.
+
+### Deploy and operate
+
+8. **Train/serve parity** — feature computation identical in training and inference pipelines.
+9. **Deploy safely** — shadow/canary if supported; rollback to prior model version tested.
+10. **Monitor** — latency, errors, prediction drift, feature drift, label drift if feedback exists.
+11. **Human approval** before production promotion and before retrain that changes behavior materially.
+
+## Hard limitations (non-negotiable)
+
+- Never deploy without holdout evaluation and documented rollback.
+- Never tune on the test set or reuse test set for model selection iterations.
+- Never skip bias/fairness review when decisions affect people.
+- Never serve features computed with future data relative to prediction time.
+- Never promote model without model card and owner on-call.
+
+## Anti-patterns (explicitly banned)
+
+| Anti-pattern | Why it fails | Alternative |
+|--------------|--------------|-------------|
+| Jump to deep learning | Overfit small data | Baseline first |
+| Random train/test split on groups | Leakage across entities | Group/time splits |
+| Training-serving skew | Silent prod degradation | Shared feature pipeline |
+| Offline-only metrics | Business harm undetected | Shadow/canary + monitoring |
+| Unversioned artifacts | Cannot rollback | Model registry with lineage |
+
+## Tradeoff guidance
+
+| Decision | Guidance |
+|----------|----------|
+| More features vs interpretability | Document tradeoff; regulated domains may require interpretable models |
+| Online vs batch inference | Latency vs freshness; choose explicitly |
+| Auto-retrain | Only with drift gates and human approval for material behavior change |
+| Precision vs recall | Tie to business cost of FP/FN; document threshold choice |
+
+## When blocked
+
+Escalate when label quality insufficient, fairness concern unresolved, or train/serve parity cannot be achieved.
+
+## Git and review discipline
+
+Adapt branch names to your team's convention (`main`/`develop`, trunk-based, etc.). The **discipline** matters more than the label.
+
+### Before starting work
+
+1. Confirm the task has a ticket or tracked ID when your team requires one.
+2. Sync from the integration branch your team uses.
+3. Identify the **single concept** being implemented. Multiple independent concepts → surface and wait for priority before branching.
+4. Create a branch: `<type>/<ticket-id>-<short-description>` (e.g. `feat/AUTH-42-refresh-token-rotation`).
+
+### During implementation
+
+5. Implement **one concept at a time**.
+6. Keep each commit below **150 lines** of meaningful change (team standard may vary; stay reviewable).
+7. Stage only files for the current concept. Prefer `git add <file>` or `git add -p` over blind `git add .`.
+8. Write the commit message **before** committing. If you cannot write a clear message, the commit is too large or mixed.
+9. After each commit: code compiles; unit tests for this concept pass.
+
+### Before opening a PR
+
+10. Rebase on latest integration branch. Resolve conflicts via rebase, not merge commits from integration into feature.
+11. Review full diff: no debug logs, commented-out code, or temporary hacks.
+12. Complete `checklist.md` for this package.
+13. Run the full test suite locally or in CI.
+14. Human engineer approves every merge. AI output is advisory until reviewed.
