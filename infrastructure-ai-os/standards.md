@@ -158,3 +158,83 @@ Detailed security audit occurs at Stage 5 - design must not block that review.
 ---
 
 ## Review and Handoff
+
+1. Complete [`checklists/architecture-review.md`](checklists/architecture-review.md)
+2. Attach ADR (Proposed), API contract, and implementation plan
+3. Human lead engineer reviews and accepts ADR
+4. Hand off to QA for test specification, then implementation agents
+
+---
+
+## Related Documents
+
+- [`tradeoffs.md`](tradeoffs.md) - decision principles and comparison tables
+- [`anti-patterns.md`](anti-patterns.md) - banned structural patterns
+- [`prompts/architecture-prompt.md`](../../prompts/architecture-prompt.md) - global architecture prompt layer
+
+## Terraform practices
+
+# Terraform
+
+Infrastructure-as-code layout for provisioning VPC, services, and data stores across environments.
+
+## Layout
+
+```
+terraform/
+├── modules/
+│   ├── vpc/        # Network foundation (subnets, routing, security groups)
+│   ├── service/    # Compute / container service (ECS, Cloud Run, etc.)
+│   └── database/   # Managed database (RDS, Cloud SQL, etc.)
+└── environments/
+    ├── dev/
+    ├── staging/
+    └── prod/
+```
+
+## Principles
+
+- **Modules are reusable** - environments compose modules; avoid environment-specific logic inside modules.
+- **State is isolated per environment** - separate remote state backends (S3 + DynamoDB, GCS, Terraform Cloud).
+- **Variables drive divergence** - instance sizes, replica counts, and CIDR blocks differ by env; module interfaces stay stable.
+- **Secrets never in tfvars committed to git** - use secret managers and CI-injected variables.
+
+## Getting started
+
+```bash
+cd terraform/environments/dev
+terraform init
+terraform plan -var-file=terraform.tfvars
+terraform apply -var-file=terraform.tfvars
+```
+
+Create `terraform.tfvars` locally (gitignored) with environment-specific values. See each environment's `main.tf` for required variables.
+
+## Remote state (recommended)
+
+Configure a backend block in each environment before production use:
+
+```hcl
+terraform {
+  backend "s3" {
+    bucket         = "org-terraform-state"
+    key            = "ai-engineering-os/dev/terraform.tfstate"
+    region         = "us-east-1"
+    dynamodb_table = "terraform-locks"
+    encrypt        = true
+  }
+}
+```
+
+## Module versioning
+
+Pin module sources to tagged releases in production:
+
+```hcl
+module "vpc" {
+  source = "git::https://github.com/org/terraform-modules.git//vpc?ref=v1.0.0"
+}
+```
+
+## Related documentation
+
