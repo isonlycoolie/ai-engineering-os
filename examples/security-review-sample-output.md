@@ -98,3 +98,6 @@ Two medium-severity findings require remediation: IDOR risk on export status end
 | Security Engineer (agent) | Changes required |
 | Human security engineer | _Pending after fixes_ |
 
+---
+
+*Sample from AI Engineering OS - findings are illustrative*
