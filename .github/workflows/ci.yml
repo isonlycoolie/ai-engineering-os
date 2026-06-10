@@ -1,7 +1,4 @@
-# Continuous integration for AI Engineering OS
-#
-# Validates prompt contract compliance and runs placeholder lint jobs.
-# Extend jobs as application code and tooling are added to the repository.
+# Phase 1 CI: validate portable knowledge packages
 
 name: CI
 
@@ -11,140 +8,73 @@ on:
   pull_request:
     branches: [main, master]
 
-concurrency:
-  group: ci-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 permissions:
   contents: read
 
 jobs:
-  prompt-contract:
-    name: Validate prompt contract
+  validate-packages:
+    name: Validate AI OS packages
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Validate prompt structure
+      - name: Verify package structure
         shell: bash
         run: |
           set -euo pipefail
-
-          REQUIRED_SECTIONS=(
-            "## Goal"
-            "## Scope"
-            "## Workflow"
-            "## What to look for"
-            "## Evidence bar"
-            "## Response rules"
-            "## Constraints"
+          REQUIRED=(
+            frontend-ai-os
+            backend-ai-os
+            fullstack-ai-os
+            devops-ai-os
+            infrastructure-ai-os
+            cybersecurity-ai-os
+            data-engineering-ai-os
+            data-analysis-ai-os
+            machine-learning-ai-os
           )
-
-          PROMPT_PATHS=()
-          while IFS= read -r -d '' file; do
-            PROMPT_PATHS+=("$file")
-          done < <(find prompts agents workflows -type f \( -name '*.md' -path '*/prompts/*' -o -path 'workflows/prompts/*.md' -o -path 'prompts/*-prompt.md' \) -print0 2>/dev/null || true)
-
-          if [ ${#PROMPT_PATHS[@]} -eq 0 ]; then
-            echo "No prompt files found; skipping contract validation."
-            exit 0
-          fi
-
+          FILES=(README.md instructions.md standards.md workflows.md prompts.md checklist.md references.md)
           FAILED=0
-          for file in "${PROMPT_PATHS[@]}"; do
-            echo "Checking $file"
-            for section in "${REQUIRED_SECTIONS[@]}"; do
-              if ! grep -qF "$section" "$file"; then
-                echo "  MISSING: $section"
+          for pkg in "${REQUIRED[@]}"; do
+            if [ ! -d "$pkg" ]; then
+              echo "MISSING directory: $pkg"
+              FAILED=1
+              continue
+            fi
+            for f in "${FILES[@]}"; do
+              if [ ! -f "$pkg/$f" ]; then
+                echo "MISSING: $pkg/$f"
                 FAILED=1
               fi
             done
+            extra=$(find "$pkg" -maxdepth 1 -type f ! -name '*.md' | wc -l)
+            if [ "$extra" -gt 0 ]; then
+              echo "UNEXPECTED non-md files in $pkg"
+              FAILED=1
+            fi
+            count=$(find "$pkg" -maxdepth 1 -type f -name '*.md' | wc -l)
+            if [ "$count" -ne 7 ]; then
+              echo "WRONG file count in $pkg: expected 7 md files, got $count"
+              FAILED=1
+            fi
           done
-
           if [ "$FAILED" -ne 0 ]; then
-            echo ""
-            echo "Prompt contract validation failed."
-            echo "See prompts/PROMPT-CONTRACT.md and prompts/PROMPT-REVIEW-CHECKLIST.md"
+            echo "Package validation failed."
             exit 1
           fi
+          echo "All 9 packages validated."
 
-          echo "All prompt files passed contract validation."
-
-  commit-discipline:
-    name: Commit size check (150 lines)
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Enforce commit size limit
+      - name: Check for deprecated Phase 0 paths
+        shell: bash
         run: |
           set -euo pipefail
-          BASE="${{ github.event.pull_request.base.sha }}"
-          HEAD="${{ github.event.pull_request.head.sha }}"
+          DEPRECATED=(agents starter-kits registry mcp-server scripts templates workflows prompts)
           FAILED=0
-          for SHA in $(git log --format="%H" "$BASE".."$HEAD"); do
-            STAT=$(git diff --stat "${SHA}^..${SHA}" \
-              -- ':!package-lock.json' ':!yarn.lock' ':!*.lock' ':!**/migrations/*' | tail -1)
-            LINES=$(echo "$STAT" | grep -oE '[0-9]+ insertion' | awk '{s+=$1} END {print s+0}')
-            DEL=$(echo "$STAT" | grep -oE '[0-9]+ deletion' | awk '{s+=$1} END {print s+0}')
-            TOTAL=$((LINES + DEL))
-            if [ "$TOTAL" -gt 150 ]; then
-              echo "FAIL: Commit $SHA exceeds 150 lines ($TOTAL)"
-              git log --oneline -1 "$SHA"
+          for path in "${DEPRECATED[@]}"; do
+            if [ -e "$path" ]; then
+              echo "DEPRECATED path still present: $path"
               FAILED=1
             fi
           done
           [ "$FAILED" -eq 0 ] || exit 1
-
-  pr-size:
-    name: PR size check (400 lines)
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Enforce PR size limit
-        run: |
-          set -euo pipefail
-          BASE="origin/${{ github.event.pull_request.base.ref }}"
-          STAT=$(git diff --stat "$BASE"..HEAD \
-            -- ':!package-lock.json' ':!yarn.lock' ':!*.lock' ':!**/migrations/*' | tail -1)
-          INS=$(echo "$STAT" | grep -oE '[0-9]+ insertion' | awk '{s+=$1} END {print s+0}')
-          DEL=$(echo "$STAT" | grep -oE '[0-9]+ deletion' | awk '{s+=$1} END {print s+0}')
-          TOTAL=$((INS + DEL))
-          echo "Total PR change: $TOTAL lines"
-          [ "$TOTAL" -le 400 ] || { echo "FAIL: PR exceeds 400 lines"; exit 1; }
-
-  registry-build:
-    name: Build static registry
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      - run: pip install pyyaml
-      - run: python scripts/build-registry.py
-      - name: Verify registry.json
-        run: |
-          test -f registry/dist/registry.json
-          python -c "import json; r=json.load(open('registry/dist/registry.json')); assert len(r['assets'])>=40; assert 'frontend' in r['profiles']"
-
-  # Re-enable mcp-server-build when mcp-server/ is tracked in the repo.
-
-  markdown-lint:
-    name: Markdown lint (placeholder)
-    runs-on: ubuntu-latest
-    needs: [prompt-contract, registry-build]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Markdown lint placeholder
-        run: |
-          echo "Markdown lint placeholder. Wire markdownlint-cli when ready."
-          echo "Suggested: npm install -g markdownlint-cli && markdownlint '**/*.md' --ignore node_modules"
+          echo "No deprecated paths on main."
