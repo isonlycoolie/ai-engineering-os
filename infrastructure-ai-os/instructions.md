@@ -318,3 +318,83 @@ Hard boundaries. These rules are non-negotiable. When a task would require viola
 ---
 
 ## Gray Areas - Always Escalate
+
+| Situation | Action |
+|-----------|--------|
+| Monolith vs service split is unclear | Document both options in ADR; human decides |
+| NFRs conflict (strong consistency vs low latency) | Tradeoff table with explicit recommendation |
+| Third-party is only viable option | ADR with vendor lock-in and exit plan |
+| Change is small but crosses service boundary | Still requires ADR or amendment to existing ADR |
+
+---
+
+## Inheritance
+
+## Anti-patterns (explicitly banned)
+
+The following patterns are explicitly banned at the architecture layer. If a proposed design exhibits any of these, the agent must flag it and propose an alternative before handoff.
+
+---
+
+## Structural Anti-Patterns
+
+| Anti-pattern | Why it fails | Correct approach |
+|--------------|--------------|------------------|
+| **Distributed monolith** | Microservices with shared database and tight coupling - worst of both models | Clear boundaries, independent deployability, explicit integration |
+| **God service** | Single service owns unrelated domains; scaling and team ownership blur | Split by bounded context when boundaries are clear |
+| **Chatty synchronous chains** | Latency compounds; failure cascades | Async messaging, aggregation, or batch where appropriate |
+| **Shared mutable state across services** | Race conditions, inconsistent reads | Isolate state; use events or APIs with defined consistency |
+| **Database as integration layer** | Hidden coupling; schema changes break multiple services | Explicit APIs or event contracts |
+
+---
+
+## Decision Process Anti-Patterns
+
+| Anti-pattern | Why it fails | Correct approach |
+|--------------|--------------|------------------|
+| **Undocumented decisions** | Tribal knowledge; cannot audit or reverse | ADR for every structural change |
+| **Single-option analysis** | False certainty; alternatives not considered | Minimum two alternatives in every ADR |
+| **Accepted-by-agent ADRs** | No human ownership | Status `Proposed` until human accepts |
+| **Implementation-led architecture** | Code defines structure retroactively | Contract and ADR before implementation |
+| **Resume-driven development** | Technology chosen for familiarity | Requirement-driven selection with ADR |
+
+---
+
+## Complexity Anti-Patterns
+
+| Anti-pattern | Why it fails | Correct approach |
+|--------------|--------------|------------------|
+| **Premature microservices** | Operational cost without scaling or team benefit | Modular monolith first; extract with justification |
+| **Premature optimization** | Complexity without measured bottleneck | Profile; optimize with evidence |
+| **Gold-plated resilience** | Cost exceeds risk | Match failure handling to SLO and blast radius |
+| **Over-abstraction** | Hard to reason about and debug | Simplest design that meets requirements |
+| **Event soup** | Untraceable causality | Clear event ownership and correlation |
+
+---
+
+## API and Contract Anti-Patterns
+
+| Anti-pattern | Why it fails | Correct approach |
+|--------------|--------------|------------------|
+| **Implementation-first APIs** | Consumers coupled to internal models | Contract-first design; stable public surface |
+| **Breaking changes without versioning** | Silent client failures | URL versioning; deprecation period |
+| **Leaky internal IDs** | Coupling and enumeration risk | Stable public identifiers; internal mapping |
+| **Inconsistent error envelopes** | Clients cannot handle failures uniformly | Standard envelope per `standards/api.md` |
+| **Undocumented idempotency** | Duplicate operations corrupt state | Idempotency keys for mutating operations |
+
+---
+
+## Dependency Anti-Patterns
+
+| Anti-pattern | Why it fails | Correct approach |
+|--------------|--------------|------------------|
+| **Dependency accumulation** | Supply chain and operational debt | Each dependency justified in ADR |
+| **Vendor lock-in without exit plan** | Migration cost becomes prohibitive | Abstraction layer or documented exit |
+| **Synchronous dependency chains** | Availability = product of all dependencies | Cache, async, circuit breakers, fallbacks |
+| **Hidden third-party in critical path** | Unowned failure modes | Dependency map; SLO alignment |
+
+---
+
+## Requirements Anti-Patterns
+
+| Anti-pattern | Why it fails | Correct approach |
