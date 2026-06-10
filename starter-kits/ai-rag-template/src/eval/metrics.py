@@ -98,3 +98,10 @@ class EvalHooks:
         out_dir = Path(self.output_dir)
         out_dir.mkdir(parents=True, exist_ok=True)
         timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+        out_file = out_dir / f"eval_{timestamp}.json"
+
+        payload = {
+            **asdict(result),
+            "recorded_at": datetime.now(timezone.utc).isoformat(),
+        }
+        out_file.write_text(json.dumps(payload, indent=2), encoding="utf-8")
