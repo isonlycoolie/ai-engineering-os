@@ -1,0 +1,64 @@
+# SLO burn-rate alert templates
+#
+# Multi-window, multi-burn-rate alerting per Google SRE recommendations.
+# Adjust service label, slo target, and error ratio queries for your stack.
+#
+# Reference: https://sre.google/workbook/alerting-on-slos/
+
+alerts:
+  - name: slo_burn_rate_critical
+    severity: critical
+    description: |
+      {{ $labels.service }} is burning error budget at a rate that will exhaust
+      the 30-day SLO within hours. Investigate immediately.
+    runbook: https://github.com/org/runbooks/blob/main/slo-burn-rate.md
+    for: 2m
+    labels:
+      team: sre
+      slo: availability
+    annotations:
+      summary: "Critical SLO burn rate for {{ $labels.service }}"
+    expr: |
+      # 14.4x burn over 1h AND 6x burn over 6h (example for 99.9% monthly SLO)
+      (
+        sum(rate(http_requests_total{status=~"5..", service="$SERVICE"}[1h]))
+        /
+        sum(rate(http_requests_total{service="$SERVICE"}[1h]))
+      ) > (14.4 * 0.001)
+      and
+      (
+        sum(rate(http_requests_total{status=~"5..", service="$SERVICE"}[6h]))
+        /
+        sum(rate(http_requests_total{service="$SERVICE"}[6h]))
+      ) > (6 * 0.001)
+
+  - name: slo_burn_rate_warning
+    severity: warning
+    description: |
+      {{ $labels.service }} error budget burn rate is elevated. Triage before
+      it becomes critical.
+    runbook: https://github.com/org/runbooks/blob/main/slo-burn-rate.md
+    for: 15m
+    labels:
+      team: sre
+      slo: availability
+    annotations:
+      summary: "Elevated SLO burn rate for {{ $labels.service }}"
+    expr: |
+      # 6x burn over 6h AND 3x burn over 3d
+      (
+        sum(rate(http_requests_total{status=~"5..", service="$SERVICE"}[6h]))
+        /
+        sum(rate(http_requests_total{service="$SERVICE"}[6h]))
+      ) > (6 * 0.001)
+      and
+      (
+        sum(rate(http_requests_total{status=~"5..", service="$SERVICE"}[3d]))
+        /
+        sum(rate(http_requests_total{service="$SERVICE"}[3d]))
+      ) > (3 * 0.001)
+
+# Replace $SERVICE with your service label value or use recording rules:
+# recording_rules:
+#   - record: service:http_errors:ratio5m
+#     expr: sum(rate(http_requests_total{status=~"5.."}[5m])) by (service) / sum(rate(http_requests_total[5m])) by (service)
