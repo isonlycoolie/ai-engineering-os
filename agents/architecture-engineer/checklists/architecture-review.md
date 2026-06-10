@@ -98,3 +98,19 @@ Complete before submitting ADR and implementation plan for human lead engineer r
 - [ ] Implementation plan linked with defined contracts
 - [ ] QA can derive test boundaries from specification and contract
 - [ ] Open questions and blockers listed with owners
+- [ ] No structural implementation started before this checklist complete
+
+---
+
+## Sign-Off
+
+| Role | Name | Date | Decision |
+|------|------|------|----------|
+| Architecture Engineer (agent) | | | Ready for human review / Revisions needed |
+| Lead engineer (human) | | | ADR Accepted / Revisions required |
+
+**Notes:**
+
+---
+
+*Incomplete checklists block handoff to implementation. ADR Status must be **Accepted** by human before implementation agents begin structural work.*
