@@ -98,3 +98,103 @@ assets:
     taskTypes: [debug]
     dependsOn: [global-system-prompt, project-context]
 
+  - id: refactor-prompt
+    path: prompts/refactor-prompt.md
+    track: shared
+    taskTypes: [refactor]
+    dependsOn: [global-system-prompt, git-commit-discipline]
+
+  # Frontend track
+  - id: path.frontend
+    path: docs/paths/frontend-only.md
+    track: frontend
+    taskTypes: [implement]
+    dependsOn: []
+
+  - id: frontend-engineer.role
+    path: agents/frontend-engineer/role.md
+    track: frontend
+    taskTypes: [implement, review]
+    dependsOn: []
+
+  - id: frontend-engineer.primary
+    path: agents/frontend-engineer/prompts/primary.md
+    track: frontend
+    taskTypes: [implement]
+    stage: 4
+    dependsOn: [global-system-prompt, standards.frontend, project-context]
+
+  - id: frontend-engineer.review
+    path: agents/frontend-engineer/prompts/review.md
+    track: frontend
+    taskTypes: [review]
+    dependsOn: [global-system-prompt, standards.frontend]
+
+  - id: frontend-engineer.checklist
+    path: agents/frontend-engineer/checklists/pre-delivery.md
+    track: frontend
+    taskTypes: [implement, review]
+    dependsOn: []
+
+  - id: standards.frontend
+    path: standards/frontend.md
+    track: frontend
+    taskTypes: [implement, review]
+    dependsOn: []
+
+  # Backend track
+  - id: path.backend
+    path: docs/paths/backend-only.md
+    track: backend
+    taskTypes: [implement]
+    dependsOn: []
+
+  - id: backend-engineer.role
+    path: agents/backend-engineer/role.md
+    track: backend
+    taskTypes: [implement, review]
+    dependsOn: []
+
+  - id: backend-engineer.primary
+    path: agents/backend-engineer/prompts/primary.md
+    track: backend
+    taskTypes: [implement]
+    stage: 4
+    dependsOn: [global-system-prompt, standards.api, standards.database, project-context]
+
+  - id: backend-engineer.review
+    path: agents/backend-engineer/prompts/review.md
+    track: backend
+    taskTypes: [review]
+    dependsOn: [global-system-prompt, standards.api]
+
+  - id: backend-engineer.checklist
+    path: agents/backend-engineer/checklists/pre-delivery.md
+    track: backend
+    taskTypes: [implement, review]
+    dependsOn: []
+
+  - id: standards.api
+    path: standards/api.md
+    track: backend
+    taskTypes: [implement, review]
+    dependsOn: []
+
+  - id: standards.database
+    path: standards/database.md
+    track: backend
+    taskTypes: [implement]
+    dependsOn: []
+
+  # Fullstack additions
+  - id: path.fullstack
+    path: docs/paths/full-stack.md
+    track: fullstack
+    taskTypes: [implement]
+    dependsOn: []
+
+  # QA
+  - id: qa-engineer.primary
+    path: agents/qa-engineer/prompts/primary.md
+    track: shared
+    taskTypes: [test]
