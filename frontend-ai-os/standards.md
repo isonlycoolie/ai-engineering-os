@@ -78,3 +78,83 @@ src/
 ## Layer Rules
 
 ### `app/` - Routing Shell
+
+- Define routes, layouts, metadata, and loading/error boundaries
+- Import and render feature `pages/` components - thin composition only
+- **Forbidden:** business logic, direct `fetch`, complex state, domain validation
+
+### feature-scoped modules - Domain Ownership
+
+- Everything specific to one product domain lives here
+- Features do not import from other features' internals - use `shared/` or public feature APIs
+- Cross-feature navigation via routes, not deep imports
+
+### `shared/` - Cross-Cutting Reuse
+
+- Promote to `shared/` only when **two or more features** need the same abstraction
+- the design system wrappers and design-system primitives live here
+- No feature-specific business logic
+
+## State Management Rules
+
+| State type | Location | Tool |
+|------------|----------|------|
+| Server/async data | `features/<feature>/api/` | the project's server-state library |
+| Feature UI state | `features/<feature>/store/` | the project's client-state store |
+| Global UI state | `stores/` | the project's client-state store |
+| Form state | Component + RHF | React Hook Form |
+| URL state | Search params | Next.js router |
+
+**Hard rule:** Server state never lives in the project's client-state store. Cache invalidation goes through QueryClient.
+
+## Data Fetching Pattern
+
+```typescript
+// features/orders/api/use-orders.ts
+export function useOrders(filters: OrderFilters) {
+  return useQuery({
+    queryKey: ['orders', filters],
+    queryFn: () => ordersService.list(filters),
+  });
+}
+```
+
+- Query keys are hierarchical and include all filter dependencies
+- Mutations invalidate affected query keys explicitly
+- Optimistic updates only with documented rollback on failure
+
+## Component Rules
+
+- Presentational components receive data via props - no embedded fetching
+- Container/page components wire hooks to presentational children
+- Max ~200 lines per component file - split when exceeded
+- Prop drilling beyond two levels → context, the project's client-state store, or composition
+
+## Import Boundaries
+
+```
+app/           → features/, shared/, providers/
+features/X/    → shared/, lib/, config/ - NOT features/Y/ internals
+shared/        → lib/, config/ - NOT features/
+lib/           → external packages only
+```
+
+## Naming Conventions
+
+| Artifact | Convention | Example |
+|----------|------------|---------|
+| Feature folder | kebab-case | `user-settings/` |
+| Components | PascalCase file and export | `OrderSummary.tsx` |
+| Hooks | camelCase with `use` prefix | `useOrderSummary.ts` |
+| Services | camelCase | `ordersService.ts` |
+| Types | PascalCase | `Order`, `OrderFilters` |
+| Query keys | tuple arrays | `['orders', { status }]` |
+
+## Testing Placement
+
+| Test type | Location |
+|-----------|----------|
+| Hook/service unit tests | Adjacent `*.test.ts` or `features/<feature>/__tests__/` |
+| Component tests | Adjacent to component or feature `__tests__/` |
+| E2E | `tests/e2e/` |
+
