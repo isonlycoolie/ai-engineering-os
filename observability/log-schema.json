@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/org/ai-engineering-os/observability/log-schema.json",
+  "title": "Structured Log Entry",
+  "description": "Canonical JSON log format for AI Engineering OS services. Aligns with standards/observability.md.",
+  "type": "object",
+  "required": ["timestamp", "level", "service", "message"],
+  "additionalProperties": true,
+  "properties": {
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 UTC timestamp with millisecond precision"
+    },
+    "level": {
+      "type": "string",
+      "enum": ["debug", "info", "warn", "error"],
+      "description": "Log severity; debug disabled in production by default"
+    },
+    "service": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "Service name (kebab-case), e.g. payments-api"
+    },
+    "message": {
+      "type": "string",
+      "description": "Human-readable log message"
+    },
+    "requestId": {
+      "type": "string",
+      "description": "Inbound request / correlation identifier"
+    },
+    "traceId": {
+      "type": "string",
+      "description": "Distributed trace ID (W3C traceparent trace-id segment)"
+    },
+    "spanId": {
+      "type": "string",
+      "description": "Current span ID within the trace"
+    },
+    "userId": {
+      "type": "string",
+      "description": "Authenticated user identifier; omit if unauthenticated"
+    },
+    "duration_ms": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Operation duration in milliseconds"
+    },
+    "http": {
+      "type": "object",
+      "properties": {
+        "method": { "type": "string" },
+        "path": { "type": "string" },
+        "status": { "type": "integer", "minimum": 100, "maximum": 599 },
+        "user_agent": { "type": "string" },
+        "client_ip": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "error": {
+      "type": "object",
+      "required": ["code"],
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "Stable machine-readable error code"
+        },
+        "detail": {
+          "type": "string",
+          "description": "Safe-to-log error detail (no secrets or PII)"
+        },
+        "stack": {
+          "type": "string",
+          "description": "Stack trace; omit in production unless debugging"
+        }
+      },
+      "additionalProperties": false
+    },
+    "context": {
+      "type": "object",
+      "description": "Additional structured context; avoid nesting secrets",
+      "additionalProperties": true
+    }
+  },
+  "examples": [
+    {
+      "timestamp": "2025-01-01T12:00:00.000Z",
+      "level": "info",
+      "service": "payments-api",
+      "requestId": "req_abc123",
+      "traceId": "4bf92f3577b34da6a3ce929d0e0e4736",
+      "message": "Payment processed",
+      "duration_ms": 142,
+      "http": {
+        "method": "POST",
+        "path": "/v1/payments",
+        "status": 201
+      }
+    },
