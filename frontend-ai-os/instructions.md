@@ -158,3 +158,83 @@ Copy `frontend-ai-os/` anywhere in your project. Tell AI: `Use ./frontend-ai-os 
 
 26. **Lazy load** heavy components and non-critical routes.
 27. **Stable list keys** - unique entity IDs, never `key={index}`.
+28. **Keep components under 200 lines** - split when exceeded.
+29. **Define impact on bundle** - note new dependencies and lazy-load candidates.
+
+## During Implementation
+
+30. **TypeScript strict** - explicit types on props, hook returns, and API responses. No `any`.
+31. **Match API contract** - types derived from or aligned with backend OpenAPI. Escalate contract gaps.
+32. **Error communication** - user-facing messages are actionable; map API error codes to clear UI copy.
+33. **Write tests alongside implementation** - Vitest for hooks/services; Playwright for critical flows when in scope.
+
+## Before Handoff
+
+34. **Run lint, typecheck, and tests** - fix regressions before submitting.
+35. **Complete `checklist.md`**.
+36. **Produce implementation summary** using Handoff requirements above.
+37. **Document integration points** - endpoints consumed, auth requirements, known API limitations.
+
+## When Blocked
+
+- **Missing or ambiguous design** → request design spec or approval to proceed with documented assumptions.
+- **API contract gap** → escalate to Backend Engineer; do not invent endpoints or response shapes.
+- **Accessibility conflict with design** → flag and propose accessible alternative.
+- **Cross-feature architectural change** → escalate to Architecture Engineer.
+
+## Architecture reference
+
+All frontend code follows a **feature-based architecture**. There are no exceptions.
+
+See also `standards.md`.
+
+## Directory Structure
+
+```
+src/
+│
+├── app/                       # Next.js App Router - routes only, no business logic
+│   ├── (auth)/                # Route groups as needed
+│   ├── (dashboard)/
+│   ├── layout.tsx
+│   ├── page.tsx
+│   └── api/                   # Route handlers only when BFF pattern is approved
+│
+├── features/                  # One folder per product domain
+│   └── <feature>/
+│       ├── api/               # the project's server-state library hooks (useQuery, useMutation)
+│       ├── components/        # Feature-scoped UI components
+│       ├── hooks/             # Feature-scoped custom hooks (non-data)
+│       ├── schemas/           # Zod validation schemas
+│       ├── services/          # Business logic isolated from UI
+│       ├── store/             # the project's client-state store slices for this feature only
+│       ├── types/             # TypeScript interfaces and types
+│       └── pages/             # Page-level components wired together
+│
+├── shared/
+│   ├── components/            # Reusable UI primitives (buttons, layouts, data-display)
+│   ├── hooks/                 # Global hooks (useDebounce, useMediaQuery)
+│   ├── utils/                 # Pure utility functions
+│   ├── services/              # Shared abstractions (http client, analytics)
+│   ├── types/                 # Global TypeScript types
+│   ├── constants/             # Application-wide constants
+│   └── validations/           # Shared Zod schemas
+│
+├── stores/                    # Global the project's client-state store store composition
+├── providers/                 # Context providers and app-level wrappers
+├── lib/                       # Third-party library configuration and adapters
+├── styles/                    # Global CSS, utility-first styling config, design tokens
+├── config/                    # Environment-aware application config
+└── tests/                     # Integration and E2E test suites
+```
+
+## Layer Rules
+
+### `app/` - Routing Shell
+
+- Define routes, layouts, metadata, and loading/error boundaries
+- Import and render feature `pages/` components - thin composition only
+- **Forbidden:** business logic, direct `fetch`, complex state, domain validation
+
+### feature-scoped modules - Domain Ownership
+
