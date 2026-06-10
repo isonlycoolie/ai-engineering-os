@@ -1,0 +1,80 @@
+# Phase 1 CI: validate portable knowledge packages
+
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+permissions:
+  contents: read
+
+jobs:
+  validate-packages:
+    name: Validate AI OS packages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify package structure
+        shell: bash
+        run: |
+          set -euo pipefail
+          REQUIRED=(
+            frontend-ai-os
+            backend-ai-os
+            fullstack-ai-os
+            devops-ai-os
+            infrastructure-ai-os
+            cybersecurity-ai-os
+            data-engineering-ai-os
+            data-analysis-ai-os
+            machine-learning-ai-os
+          )
+          FILES=(README.md instructions.md standards.md workflows.md prompts.md checklist.md references.md)
+          FAILED=0
+          for pkg in "${REQUIRED[@]}"; do
+            if [ ! -d "$pkg" ]; then
+              echo "MISSING directory: $pkg"
+              FAILED=1
+              continue
+            fi
+            for f in "${FILES[@]}"; do
+              if [ ! -f "$pkg/$f" ]; then
+                echo "MISSING: $pkg/$f"
+                FAILED=1
+              fi
+            done
+            extra=$(find "$pkg" -maxdepth 1 -type f ! -name '*.md' | wc -l)
+            if [ "$extra" -gt 0 ]; then
+              echo "UNEXPECTED non-md files in $pkg"
+              FAILED=1
+            fi
+            count=$(find "$pkg" -maxdepth 1 -type f -name '*.md' | wc -l)
+            if [ "$count" -ne 7 ]; then
+              echo "WRONG file count in $pkg: expected 7 md files, got $count"
+              FAILED=1
+            fi
+          done
+          if [ "$FAILED" -ne 0 ]; then
+            echo "Package validation failed."
+            exit 1
+          fi
+          echo "All 9 packages validated."
+
+      - name: Check for deprecated Phase 0 paths
+        shell: bash
+        run: |
+          set -euo pipefail
+          DEPRECATED=(agents starter-kits registry mcp-server scripts templates workflows prompts)
+          FAILED=0
+          for path in "${DEPRECATED[@]}"; do
+            if [ -e "$path" ]; then
+              echo "DEPRECATED path still present: $path"
+              FAILED=1
+            fi
+          done
+          [ "$FAILED" -eq 0 ] || exit 1
+          echo "No deprecated paths on main."
