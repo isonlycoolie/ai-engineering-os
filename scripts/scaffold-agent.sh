@@ -98,3 +98,103 @@ Apply project standards in \`standards/\` plus role-specific rules below.
 
 -
 
+EOF
+
+write_file "$AGENT_DIR/architecture-rules.md" <<EOF
+# ${ROLE_TITLE} Agent — Architecture Rules
+
+Structural constraints for this role. Escalate to Architecture Engineer when changes affect system topology.
+
+-
+
+EOF
+
+write_file "$AGENT_DIR/anti-patterns.md" <<EOF
+# ${ROLE_TITLE} Agent — Anti-Patterns
+
+Explicitly banned patterns. Flag and propose alternatives before handoff.
+
+| Anti-pattern | Why it is banned | Alternative |
+|--------------|------------------|-------------|
+| | | |
+EOF
+
+write_file "$AGENT_DIR/tradeoffs.md" <<EOF
+# ${ROLE_TITLE} Agent — Tradeoff Guidance
+
+Select options from explicit context — not preference. Default to the simplest option that satisfies the requirement.
+
+| Decision | Option A | Option B | Guidance |
+|----------|----------|----------|----------|
+| | | | |
+EOF
+
+write_file "$AGENT_DIR/checklists/pre-delivery.md" <<EOF
+# ${ROLE_TITLE} — Pre-Delivery Checklist
+
+Complete before handoff to human review or the next agent.
+
+## Scope and requirements
+
+- [ ] Task specification and acceptance criteria read in full
+- [ ] All in-scope requirements addressed or explicitly flagged as out of scope
+
+## Quality
+
+- [ ] Output aligns with \`standards/\` and role instructions
+- [ ] Evidence bar from \`prompts/primary.md\` met
+
+## Handoff
+
+- [ ] Open questions and risks documented
+- [ ] Recommended next step named (agent role or human)
+
+---
+
+| Role | Name | Date | Decision |
+|------|------|------|----------|
+| ${ROLE_TITLE} (agent) | | | Ready for review |
+| Human reviewer | | | Approved / Changes required |
+EOF
+
+write_file "$AGENT_DIR/templates/deliverable.md" <<EOF
+# ${ROLE_TITLE} Deliverable
+
+| Field | Value |
+|-------|-------|
+| **Feature / task** | |
+| **Author (agent run)** | ${ROLE_SLUG} |
+| **Date** | YYYY-MM-DD |
+
+## Summary
+
+## Changes
+
+## Evidence
+
+## Open questions
+
+## Handoff
+EOF
+
+ROLE_LOWER="$(echo "$ROLE_TITLE" | tr '[:upper:]' '[:lower:]')"
+
+prompt_stub() {
+  local kind="$1"
+  local goal="$2"
+  cat <<EOF
+You are a ${ROLE_LOWER} working on the repository and task described in the project context below.
+Apply the role constraints, standards, and checklists provided in context.
+Treat the open workspace as the source of truth for code, conventions, and file paths.
+
+Inherits [\`global-system-prompt.md\`](../../../prompts/global-system-prompt.md). Follow [\`instructions.md\`](../instructions.md) and [\`limitations.md\`](../limitations.md).
+
+## Project context
+
+[Developer provides: repo, paths, stack, ticket, acceptance criteria, files in scope]
+
+## Goal
+
+${goal}
+
+## Scope
