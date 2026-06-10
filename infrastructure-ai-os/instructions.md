@@ -478,3 +478,83 @@ When two options both satisfy requirements, choose the one with lower operationa
 | Decision | Option A | Option B | Guidance |
 |----------|----------|----------|----------|
 | Build vs buy | Build in-house | Third-party SaaS | Buy for commodity (email, payments gateway); build for core differentiation - document vendor exit in ADR |
+| ORM vs raw SQL | ORM | Raw SQL | ORM for standard CRUD; raw SQL for complex reporting and performance-critical paths |
+| Feature flags vs branch deploy | Feature flags | Long-lived branches | Feature flags for gradual rollout; avoid long-lived branches for architectural experiments |
+
+---
+
+## Reversibility Assessment
+
+For every significant decision, classify reversibility in the ADR:
+
+| Class | Definition | Example |
+|-------|------------|---------|
+| **Low cost** | Can revert in days without data migration | Feature flag, new optional endpoint |
+| **Medium cost** | Revert requires coordinated deploy and data backfill | New service with dual-write period |
+| **High cost** | Revert requires migration, downtime, or contract breaks | Database split, public API version removal |
+
+Prefer low-cost reversibility. High-cost decisions require explicit human acceptance and Review Date.
+
+---
+
+## Complexity Budget
+
+Each project has an implicit complexity budget. Spend it on:
+
+- Correctness under stated load and failure modes
+- Clear boundaries and operability
+- Measurable SLOs
+
+Do not spend it on:
+
+- Hypothetical scale without requirements
+- Technology diversity without access-pattern justification
+- Abstraction layers with a single implementation
+
+When complexity increases, the ADR must state **what requirement forces it** and **what simpler option was rejected and why**.
+
+---
+
+## Escalation When Tradeoffs Are Equal
+
+When options are materially equivalent on requirements:
+
+1. Document both in ADR Alternatives section
+2. Recommend the simpler operational path
+3. Escalate to human engineer for final selection
+4. Record human choice in ADR Status transition to Accepted
+
+Do not flip a coin silently - ambiguous tradeoffs are human decisions.
+
+---
+
+## Related Documents
+
+- `standards.md` - ADR process and structural rules
+- [`anti-patterns.md`](anti-patterns.md) - patterns that violate these tradeoffs
+- `standards.md` - API versioning and envelope tradeoffs already decided globally
+
+## When blocked
+
+- **Irreversible decision without ADR** → stop; document options for human choice.
+- **New external dependency** → risk assessment and human approval.
+- **Cross-team boundary change** → escalate before implementation.
+
+## Git and review discipline
+
+Adapt branch names to your team's convention (`main`/`develop`, trunk-based, etc.). The **discipline** matters more than the label.
+
+### Before starting work
+
+1. Confirm the task has a ticket or tracked ID when your team requires one.
+2. Sync from the integration branch your team uses.
+3. Identify the **single concept** being implemented. Multiple independent concepts → surface and wait for priority before branching.
+4. Create a branch: `<type>/<ticket-id>-<short-description>` (e.g. `feat/AUTH-42-refresh-token-rotation`).
+
+### During implementation
+
+5. Implement **one concept at a time**.
+6. Keep each commit below **150 lines** of meaningful change (team standard may vary; stay reviewable).
+7. Stage only files for the current concept. Prefer `git add <file>` or `git add -p` over blind `git add .`.
+8. Write the commit message **before** committing. If you cannot write a clear message, the commit is too large or mixed.
+9. After each commit: code compiles; unit tests for this concept pass.
