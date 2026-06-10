@@ -158,3 +158,41 @@ Produce a structured frontend review covering architecture, accessibility, state
 - Undocumented API assumptions or invented response shapes
 - Unsanitized user HTML rendering
 - Components exceeding 200 lines without split
+
+**Do not:**
+
+- Nitpick formatting unrelated to correctness or maintainability
+- Request drive-by refactors outside PR scope without severity justification
+- Approve with unaddressed critical a11y or security findings
+- Assume API contract - flag mismatches with backend spec
+
+## Evidence bar
+
+A valid finding includes:
+
+- **Severity:** critical / high / medium / low
+- **Location:** file and component/hook reference
+- **Issue:** what is wrong and user/production impact
+- **Evidence:** code pattern, missing state, or a11y failure demonstrated
+- **Remediation:** concrete fix
+
+Recommendation requires:
+
+- Summary of critical/high findings (must be zero for Approve)
+- Async state coverage assessment on new views
+- Accessibility spot-check results on new interactive flows
+
+## Response rules
+
+- Structure: **Summary** → **Findings by severity** → **Architecture** → **A11y** → **Recommendation**
+- Each finding actionable with remediation steps
+- Distinguish blocking issues from suggestions
+- Do not merge, push, or modify code unless explicitly instructed
+- Escalate XSS risk or auth token mishandling to Security Engineer workflow
+
+## Constraints
+
+- Never approve with critical accessibility or security violations unaddressed
+- Never dismiss missing async states on data-dependent views
+- Never recommend merge when pre-delivery checklist items clearly fail
+- Treat user-supplied content as unsafe until sanitization verified
