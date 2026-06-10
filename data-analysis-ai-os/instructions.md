@@ -78,3 +78,83 @@ Produce reproducible, decision-grade analysis: clear questions, documented metho
 
 Copy `data-analysis-ai-os/` anywhere. Use the team's SQL warehouse, notebook environment, or BI tool — do not impose tooling.
 
+## Working instructions
+
+### Frame
+
+1. **Define the decision** — what action follows from this analysis? Who decides?
+2. **Define metrics precisely** — formula, filters, time window, grain, exclusions, known edge cases.
+3. **State hypothesis** — what you expect to find and what would change the recommendation.
+
+### Explore and validate
+
+4. **Profile data** — nulls, duplicates, outliers, known quality issues, collection gaps.
+5. **Document assumptions** — cohort rules, attribution, survivorship, seasonality, filters.
+6. **Sanity checks** — totals, distinct counts, reconcile to source-of-truth reports; explain gaps.
+7. **Separate exploration from reporting** — do not present exploratory cuts as prespecified.
+
+### Analyze and deliver
+
+8. **Analyze reproducibly** — pinned snapshot or time window; saved queries; random seeds where applicable.
+9. **Peer review metric logic** before executive-facing output on high-stakes decisions.
+10. **State limitations** — causality vs correlation, missing data, sample bias, external validity.
+11. **Deliver structure** — question → method → finding → limitation → recommendation.
+
+## Hard limitations (non-negotiable)
+
+- Never present correlation as causation without explicit design (experiment, IV, diff-in-diff, etc.).
+- Never omit filters that materially change conclusions.
+- Never expose individual-level PII in shared reports without approval.
+- Never cherry-pick time windows without documenting why others were excluded.
+- Never ship one-off manual export as the only artifact for recurring decisions.
+
+## Anti-patterns (explicitly banned)
+
+| Anti-pattern | Why it fails | Alternative |
+|--------------|--------------|-------------|
+| Manual one-off exports | Not reproducible | Scripted pipeline with parameters |
+| Metric without definition | Misaligned decisions | Metric dictionary in report |
+| Chart without units/labels | Misinterpretation | Full axis labels, sample size, date range |
+| p-hacking / multiple testing | False discoveries | Pre-register cuts or adjust methods |
+| Survivorship bias ignored | Optimistic conclusions | Document dropout/exclusions |
+
+## Tradeoff guidance
+
+| Decision | Guidance |
+|----------|----------|
+| Precision vs speed | Document tradeoff; flag when speed forced shortcuts |
+| Aggregate vs drill-down | Aggregate in shared reports; drill-down in appendix with access controls |
+| Automated vs manual QA | Automate sanity checks; human review for high-stakes |
+
+## When blocked
+
+Escalate when data quality blocks conclusion, metric definition disputed, or PII scope unclear.
+
+## Git and review discipline
+
+Adapt branch names to your team's convention (`main`/`develop`, trunk-based, etc.). The **discipline** matters more than the label.
+
+### Before starting work
+
+1. Confirm the task has a ticket or tracked ID when your team requires one.
+2. Sync from the integration branch your team uses.
+3. Identify the **single concept** being implemented. Multiple independent concepts → surface and wait for priority before branching.
+4. Create a branch: `<type>/<ticket-id>-<short-description>` (e.g. `feat/AUTH-42-refresh-token-rotation`).
+
+### During implementation
+
+5. Implement **one concept at a time**.
+6. Keep each commit below **150 lines** of meaningful change (team standard may vary; stay reviewable).
+7. Stage only files for the current concept. Prefer `git add <file>` or `git add -p` over blind `git add .`.
+8. Write the commit message **before** committing. If you cannot write a clear message, the commit is too large or mixed.
+9. After each commit: code compiles; unit tests for this concept pass.
+
+### Before opening a PR
+
+10. Rebase on latest integration branch. Resolve conflicts via rebase, not merge commits from integration into feature.
+11. Review full diff: no debug logs, commented-out code, or temporary hacks.
+12. Complete `checklist.md` for this package.
+13. Run the full test suite locally or in CI.
+14. Human engineer approves every merge. AI output is advisory until reviewed.
+
+## Handoff requirements
