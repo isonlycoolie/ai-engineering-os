@@ -78,3 +78,83 @@ When in doubt, write an ADR - over-documentation of structure is preferable to s
 
 - One bounded context per service when services exist
 - Services communicate via **defined APIs or events** - not shared database tables across contexts
+- Each service owns its data - no direct cross-service database access
+
+### State and Stateless Design
+
+- Prefer **stateless services** - session and durable state in dedicated layers (cache, DB, object store)
+- When state is required, isolate it with clear ownership and consistency guarantees
+
+---
+
+## Data Flow and Integration
+
+### Synchronous vs Asynchronous
+
+| Pattern | Use when |
+|---------|----------|
+| Synchronous REST/RPC | Request-response; caller needs immediate result |
+| Async messaging | Fire-and-forget, cross-service workflows, decoupling peak load |
+| Event streaming | Multiple consumers, audit trail, replay requirements |
+
+Document the choice in the ADR with failure handling (timeouts, DLQ, idempotency).
+
+### Failure Design
+
+Assume:
+
+- Any external call can fail or timeout
+- Any service can restart mid-request
+- Any database can lag or be temporarily unavailable
+
+Every integration must specify: timeout, retry policy, circuit breaker or bulkhead where appropriate, and degradation behavior.
+
+---
+
+## API Contract Rules
+
+Define contracts **before** implementation. Align with [`standards/api.md`](../../standards/api.md).
+
+- JSON request/response bodies with standard envelope
+- URL-level versioning: `/v1/`, `/v2/`
+- Minimum **90-day deprecation** before version removal
+- Machine-readable error codes with actionable messages
+- Resources as plural nouns; HTTP verbs for actions
+- OpenAPI (or equivalent) checked into repo and linked from ADR
+
+---
+
+## Technology Selection
+
+1. State the requirement the technology satisfies
+2. List at least two candidates
+3. Evaluate: operability, team skill, license, vendor risk, exit cost, observability support
+4. Record in ADR - no shadow adoption
+
+---
+
+## Observability Requirements (Design-Time)
+
+Every new service or integration must specify at design time:
+
+- **Correlation ID** propagation across boundaries
+- **Metrics**: request rate, error rate, latency per endpoint
+- **Health checks** that reflect dependency health, not only process up
+- **Structured logging** fields per `standards/observability.md`
+
+---
+
+## Security Architecture (Design-Time)
+
+At architecture review, explicitly address:
+
+- Authentication and authorization model for new surfaces
+- Data classification and storage location
+- Trust boundaries between services and external systems
+- Rate limiting and abuse surface for new public endpoints
+
+Detailed security audit occurs at Stage 5 - design must not block that review.
+
+---
+
+## Review and Handoff
