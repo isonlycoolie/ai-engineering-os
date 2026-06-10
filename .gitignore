@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# Build
+dist/
+.next/
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# Logs
+*.log
+
+# Registry build output (built in CI / before Render deploy)
+registry/dist/
+
+# Deferred: MCP server (tracked in a future branch)
+mcp-server/
+
+# Local development / planning (not versioned)
+docs/ROADMAP.md
+.cursor/plans/
+**/*.plan.md
+
+# Lock files in kits (generated on install; not tracked)
+starter-kits/*/package-lock.json
