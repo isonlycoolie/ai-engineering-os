@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Engineering OS Registry</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 720px; margin: 2rem auto; padding: 0 1rem; line-height: 1.5; }
+    h1 { font-size: 1.5rem; }
+    code { background: #f4f4f4; padding: 0.15rem 0.4rem; border-radius: 4px; }
+    ul { padding-left: 1.25rem; }
+    a { color: #0563c1; }
+  </style>
+</head>
+<body>
+  <h1>AI Engineering OS Registry</h1>
+  <p>Version <strong>{{VERSION}}</strong> | Built {{BUILD_TIME}} | {{ASSET_COUNT}} assets</p>
+  <p>Static instruction registry for MCP agents and IDE integrations.</p>
+  <h2>Endpoints</h2>
+  <ul>
+    <li><a href="/registry.json"><code>registry.json</code></a> - semantic index</li>
+    <li><a href="/profiles/frontend.json"><code>profiles/frontend.json</code></a> - frontend track</li>
+    <li><a href="/profiles/backend.json"><code>profiles/backend.json</code></a> - backend track</li>
+    <li><a href="/profiles/fullstack.json"><code>profiles/fullstack.json</code></a> - fullstack track</li>
+    <li><a href="/profiles/single-task.json"><code>profiles/single-task.json</code></a> - single task</li>
+  </ul>
+  <h2>MCP Setup</h2>
+  <p>Point <code>os_registry_url</code> in <code>ai-os.config.yaml</code> to this site URL, then configure the AI OS MCP server in Cursor. See project docs: <code>docs/mcp-setup.md</code>.</p>
+  <h2>Tracks</h2>
+  <ul>
+    <li><strong>frontend</strong> - UI only, no backend agent bundle</li>
+    <li><strong>backend</strong> - API/services only</li>
+    <li><strong>fullstack</strong> - API + UI contract-first</li>
+    <li><strong>single-task</strong> - bug, refactor, review, deploy</li>
+  </ul>
+</body>
+</html>
