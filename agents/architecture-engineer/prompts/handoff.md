@@ -98,3 +98,7 @@ Use this structure:
 
 ## Constraints
 
+- Agents propose ADRs; humans accept - handoff must reflect this.
+- Do not hand off to implementation without API contract when public behavior changes.
+- Do not hand off to QA with untestable requirements unresolved.
+- Handoff is documentation only - do not merge, deploy, or implement.
