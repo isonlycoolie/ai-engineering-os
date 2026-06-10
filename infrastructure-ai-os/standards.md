@@ -238,3 +238,6 @@ module "vpc" {
 
 ## Related documentation
 
+- [SRE pre-production checklist](../agents/sre-engineer/checklists/pre-production.md)
+- [Monitoring alerts](../monitoring/)
+- [Observability standards](../standards/observability.md)
