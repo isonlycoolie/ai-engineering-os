@@ -98,3 +98,8 @@ def build() -> None:
 
     print(f"Built registry v{version}: {len(assets_out)} assets -> {DIST}")
     size_mb = sum(f.stat().st_size for f in DIST.rglob("*") if f.is_file()) / 1024 / 1024
+    print(f"Dist size: {size_mb:.2f} MB")
+
+
+if __name__ == "__main__":
+    build()
