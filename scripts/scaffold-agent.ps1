@@ -98,3 +98,103 @@ if ($RoleSlug -notmatch '^[a-z0-9]+(-[a-z0-9]+)*$') {
 }
 
 if ([string]::IsNullOrWhiteSpace($RoleTitle)) {
+    $RoleTitle = ConvertTo-TitleCaseFromSlug -Slug $RoleSlug
+}
+
+$RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
+$AgentDir = Join-Path (Join-Path $RepoRoot "agents") $RoleSlug
+
+if (Test-Path $AgentDir) {
+    Write-Error "Agent directory already exists: $AgentDir"
+}
+
+$dirs = @(
+    $AgentDir,
+    (Join-Path $AgentDir "prompts"),
+    (Join-Path $AgentDir "templates"),
+    (Join-Path $AgentDir "checklists")
+)
+foreach ($dir in $dirs) {
+    New-Item -ItemType Directory -Path $dir -Force | Out-Null
+}
+
+$RoleLower = $RoleTitle.ToLower()
+
+function Write-AgentFile {
+    param([string]$RelativePath, [string]$Content)
+    Set-Content -Path (Join-Path $AgentDir $RelativePath) -Value $Content -Encoding utf8
+}
+
+Write-AgentFile "role.md" @"
+# $RoleTitle Agent - Role Definition
+
+## Purpose
+
+Describe what this agent owns and the quality bar for its deliverables.
+
+## Responsibilities
+
+-
+
+## Deliverables
+
+-
+
+## Boundaries
+
+| In scope | Out of scope |
+|----------|--------------|
+| | |
+
+## Collaboration
+
+- Receives:
+- Hands off to:
+
+## Success Criteria
+
+A deliverable is successful when it passes the pre-delivery checklist, meets the evidence bar in prompts, and a human engineer can explain every decision without unexplained trust.
+"@
+
+Write-AgentFile "instructions.md" @"
+# $RoleTitle Agent - Working Instructions
+
+Before producing output, this agent must:
+
+1. Read the task specification and linked standards completely.
+2. Read relevant existing code or documentation in the repository.
+3. List all files or artifacts that will be created or modified.
+4. Confirm the approach does not conflict with existing patterns or `tradeoffs.md`.
+5. If any requirement is ambiguous, ask one precise clarifying question - stop until answered.
+6. Produce output aligned with `role.md`, `limitations.md`, and applicable `standards/` docs.
+7. Complete `checklists/pre-delivery.md` before handoff.
+"@
+
+Write-AgentFile "limitations.md" @"
+# $RoleTitle Agent - Hard Limitations
+
+This agent must never:
+
+- Proceed past ambiguous requirements without surfacing them
+- Merge, deploy, or push without explicit human instruction
+- Make cross-cutting architectural decisions without human ADR approval
+- Output secrets, credentials, or skip validation at trust boundaries
+- Delete failing tests or checklists to pass a gate
+"@
+
+Write-AgentFile "coding-standards.md" @"
+# $RoleTitle Agent - Coding Standards
+
+Apply project standards in `standards/` plus role-specific rules below.
+
+-
+
+"@
+
+Write-AgentFile "architecture-rules.md" @"
+# $RoleTitle Agent - Architecture Rules
+
+Structural constraints for this role. Escalate to Architecture Engineer when changes affect system topology.
+
+-
+
